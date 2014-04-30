@@ -1,0 +1,5 @@
+%YAML:1.0
+Parameters:
+    turn: 12
+    angle_left: g290g
+    angle_right: g070g

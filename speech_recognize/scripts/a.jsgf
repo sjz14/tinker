@@ -1,0 +1,3 @@
+#JSGF V1.0;
+public <startHello> = my name is <name>;
+<name> = tom | bob | david | jack | lucy | nick | alex;

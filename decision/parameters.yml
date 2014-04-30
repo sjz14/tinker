@@ -1,0 +1,9 @@
+%YAML:1.0
+Parameters:
+    far_dis: 1100
+    near_dis: 1500
+    left_dis: 240
+    right_dis: 400
+    mode: 1
+    speed_ratio: 0.2
+    speed_basis: 140
