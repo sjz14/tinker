@@ -21,7 +21,7 @@ fsg
 编辑gram.jsgf，写入语法。<br />
 示例如下：<br />
 ====================分割线====================<br />
-#JSGF V1.0;<br />
+&#35;JSGF V1.0;<br />
 grammar furoc;<br />
 public <furocCmd> = <myname> | <hellotinker>;<br />
 <myname> = MY NAME IS <names>;<br />
