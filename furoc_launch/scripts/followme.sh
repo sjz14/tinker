@@ -4,14 +4,17 @@
 # Author        : bss
 # Package       : furoc_launch
 # Creation date : 2014-04-11
-#  Last modified: 2014-04-11, 18:00:12
+#  Last modified: 2014-04-30, 13:31:00
 # Description   : 
 # 
 
 echo "followme 的启动脚本，按 Ctrl+C 终止"
-echo "提示：按 Super+W 切换窗口"
 
-source ./start.sh
+export CUR_DIR=~/catkin_ws/src/furoc_launch/scripts
+cd $CUR_DIR
+source $CUR_DIR/start.sh
 
-gnome-terminal -e "./followme_decision.sh"
+# followme
+export FU_="rosrun followme followme_decision"
+xdotool key ctrl+shift+t; sleep 2; xdotool type "$FU_"; xdotool key "Return"
 

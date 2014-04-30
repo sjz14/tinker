@@ -4,7 +4,7 @@
 # Author        : bss
 # Package       : furoc_launch
 # Creation date : 2014-04-11
-#  Last modified: 2014-04-11, 17:21:23
+#  Last modified: 2014-04-30, 13:17:15
 # Description   : Start roscore.
 # 
 
@@ -14,6 +14,6 @@ ipaddr=${ipaddr#*inet 地址:}
 ipaddr=${ipaddr%%\ *}
 
 # Start roscore
-ROS_HOSTNAME=$ipaddr
+export ROS_HOSTNAME=$ipaddr
 roscore
 

@@ -4,14 +4,17 @@
 # Author        : bss
 # Package       : furoc_launch
 # Creation date : 2014-04-11
-#  Last modified: 2014-04-11, 18:04:45
+#  Last modified: 2014-04-30, 13:31:07
 # Description   : 
 # 
 
 echo "who 的启动脚本，按 Ctrl+C 终止"
-echo "提示：按 Super+W 切换窗口"
 
-source ./start.sh
+export CUR_DIR=~/catkin_ws/src/furoc_launch/scripts
+cd $CUR_DIR
+source $CUR_DIR/start.sh
 
-gnome-terminal -e "./speech_rec.sh"
+# facerec
+export FU_="rosrun facerec facerec_node"
+xdotool key ctrl+shift+t; sleep 2; xdotool type "$FU_"; xdotool key "Return"
 
