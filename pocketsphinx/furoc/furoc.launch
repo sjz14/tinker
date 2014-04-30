@@ -1,8 +1,8 @@
 <launch>
 
   <node name="recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen">
-    <param name="fsg" value="$(find pocketsphinx)/furoc/2772.fsg"/>
-    <param name="dict" value="$(find pocketsphinx)/furoc/2772.dic"/>
+    <param name="fsg" value="$(find pocketsphinx)/furoc/gram.fsg"/>
+    <param name="dict" value="$(find pocketsphinx)/furoc/words.dic"/>
   </node>
 
 </launch>
