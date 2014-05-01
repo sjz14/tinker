@@ -4,12 +4,12 @@
 # Author        : bss
 # Package       : furoc_launch
 # Creation date : 2014-04-11
-#  Last modified: 2014-04-30, 13:17:15
+#  Last modified: 2014-05-01, 10:58:57
 # Description   : Start roscore.
 # 
 
 # Find IP address, default wlan0
-ipaddr=$(ifconfig eth0 | grep inet\ )
+ipaddr=$(ifconfig | grep 192 | grep inet\ )
 ipaddr=${ipaddr#*inet 地址:}
 ipaddr=${ipaddr%%\ *}
 

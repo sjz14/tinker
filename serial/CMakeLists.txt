@@ -7,8 +7,11 @@ project(serial)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  roslib
 )
-
+find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui)
+INCLUDE(${QT_USE_FILE})
+ADD_DEFINITIONS(${QT_DEFINITIONS})
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -94,6 +97,8 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  include
+  ${Qt4_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -112,6 +117,12 @@ add_executable(serial_node src/main.cpp)
 # target_link_libraries(serial_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(serial_node
+    ${Qt4_LIBRARIES}
+    ${QT_LIBRARIES}
+    ${catkin_LIBRARIES}
+    "/usr/lib/libserial.so"
+)
 
 #############
 ## Install ##
