@@ -1,10 +1,12 @@
+下文中${task}代表任务名，如 whoiswho<br />
+
 修改方法
 =====
 <br />
 <br />
 dict
 -----
-编辑input.txt，写入可能出现的词语。<br />
+编辑${task}/sent.txt，写入可能出现的词语。<br />
 示例如下：<br />
 
     hello tinker
@@ -14,7 +16,7 @@ dict
 
 使用以下命令编译：
 
-    python input2dict.py
+    python input2dict.py -t ${task}
 
 <br />
 <br />
@@ -32,9 +34,9 @@ fsg
 
 使用以下命令编译：
 
-    bash jsgf2fsg.sh
+    python jsgf2fsg.py -t ${task}
 
 <br />
 <br />
-注意：编写input.txt和gram.jsgf时，单词请用大写。<br />
+注意：编写 sent.txt 和 gram.jsgf 时，单词请用大写。<br />
 
