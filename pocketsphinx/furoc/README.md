@@ -38,5 +38,6 @@ fsg
 
 <br />
 <br />
-注意：编写 sent.txt 和 gram.jsgf 时，单词请用大写。<br />
+注意：编写 gram.jsgf 时，单词请用大写。<br />
+最好不要出现 's，一定要出现的话加空格，如 IT 'S <br />
 

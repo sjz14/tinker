@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # file: input2dict.py
 # created by bss at 2014-04-30
-# Last modified: 2014-05-09, 10:51:21
+# Last modified: 2014-05-09, 17:46:48
 # 把输入转化为字典
 #
 
@@ -63,15 +63,19 @@ def processTask(task):
 
     fp = open(taskdir + 'words.dic', 'w')
     for word in words:
+        isSucceed = False
         try:
             line = word + '\t' + cmudict[word] + '\n'
             fp.write(line)
+            isSucceed = True
             for i in range(2, 5):
                 key = word + '(' + str(i) + ')'
                 line = key + '\t' + cmudict[key] + '\n'
                 fp.write(line)
         except:
             pass
+        if not isSucceed:
+            print("I can't find " + word)
     fp.close()
 
 if __name__ == '__main__':

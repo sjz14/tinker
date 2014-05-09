@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # created by bss at 2014-03-13
-# Last modified: 2014-03-15, 17:26:19
+# Last modified: 2014-05-09, 16:06:34
+# Send from keyboard
+#
 
 import roslib
 import rospy
