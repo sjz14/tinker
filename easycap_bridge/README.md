@@ -1,16 +1,21 @@
-###双目采集、转换到ROS格式<br />
+##双目采集、转换到ROS格式<br />
 <br />
-##使用方法<br />
+###使用方法<br />
 使用此命令运行：<br />
 
     rosrun easycap_bridge easycap_bridge_node
+
+发布的 topic ：<br />
+
+    /binocular/left
+    /binocular/right
 
 使用此命令，在CV窗口上按键选择左眼：<br />
 
     rosrun easycap_bridge select_left_eye.py
 
 <br />
-##安装方法<br />
+###安装方法<br />
 Ubuntu 12.04.3, 内核版本 3.8.0-29<br />
 具体请参考 https://code.google.com/p/easycap-somagic-linux/wiki/GettingStarted ，此处只列出关键文件<br />
 <br />
