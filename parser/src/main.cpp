@@ -10,7 +10,7 @@ void parserCallback(const geometry_msgs::Twist::ConstPtr& msg)
 {
     ROS_INFO("get geometry");
     std::stringstream ss;
-    
+
     /*//added
     std::string angle;
     float speed;
@@ -34,7 +34,7 @@ void parserCallback(const geometry_msgs::Twist::ConstPtr& msg)
         sspeed = 45;
     }*/
     std::string angle((msg->linear.x > 0)?"g000g":"g180g");
-   
+
     float speed = (msg->linear.x>0)?msg->linear.x:-msg->linear.x;
     if ((speed+(fabs(msg->angular.z)))<0.50) speed = 0;
     speed*=200;
@@ -42,7 +42,7 @@ void parserCallback(const geometry_msgs::Twist::ConstPtr& msg)
     char c = (sspeed>0)?'0':'-';
     sspeed = (sspeed>0)?sspeed*20:sspeed*(-20);
     if (speed==0) sspeed =0;
-    ss<<"sfg"<<std::setfill('0')<<std::setw(3)<<(int)(speed)<<angle<<c<<std::setfill('0')<<std::setw(2)<<(int)sspeed<<"e";
+    ss<<"sfg"<<std::setfill('0')<<std::setw(3)<<(int)(speed)<<angle<<c<<std::setfill('0')<<std::setw(2)<<(int)sspeed<<"g000e";
     std_msgs::String mesg;
     mesg.data = ss.str();
     if (p) p->publish(mesg);
