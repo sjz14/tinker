@@ -1,5 +1,5 @@
 %YAML:1.0
 Parameters:
-    video_a: 1
+    video_a: 0
     video_b: 2
     a_is_left: 1

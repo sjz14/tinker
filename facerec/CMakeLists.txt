@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_srvs
   roslib
   image_transport
+  followme
 )
 find_package(OpenCV)
 ## System dependencies are found with CMake's conventions
@@ -119,8 +120,9 @@ include_directories(
   ADD_EXECUTABLE(test src/test;src/utils)
   ADD_EXECUTABLE(train src/train;src/utils)
   ADD_EXECUTABLE(facerec_node src/main;src/Recognizer;src/CLM;src/FCheck;src/FDet;src/IO;src/Patch;src/PAW;src/PDM;src/Tracker;src/utils)
-  target_link_libraries(tracker ${OpenCV_LIBS}
-  reading_image
+  target_link_libraries(tracker
+    ${OpenCV_LIBS}
+    reading_image
   )
   target_link_libraries(test ${OpenCV_LIBS})
   target_link_libraries(train ${OpenCV_LIBS})
@@ -129,8 +131,9 @@ include_directories(
   target_link_libraries(tracker ${catkin_LIBRARIES})
   target_link_libraries(facerec_node ${OpenCV_LIBS})
 ## Add cmake target dependencies of the executable/library
-  target_link_libraries(facerec_node ${catkin_LIBRARIES}
-  reading_image
+  target_link_libraries(facerec_node
+    reading_image
+    ${catkin_LIBRARIES}
   )
   
 
