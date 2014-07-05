@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<robot name = "tinker">
+    <link name = "base_link">
+        <visual>
+            <geometry>
+                <cylinder length = "1.2" radius = "0.08" />
+            </geometry>
+            <origin xyz = "0 0 0.05" />
+            <material name = "white">
+                <color rgba = "1 1 1 1" />
+            </material>
+        </visual>
+
+    </link>
+
+    <link name = "chassis">
+        <visual>
+            <geometry>
+                <box size = "0.5 0.3 0.02" />
+            </geometry>
+
+            <material name = "blue">
+            <color rgba = "0 0 0.8 1" />
+            </material>
+        </visual>
+    </link>
+
+
+
+    <joint name="base_to_chassis" type = "fixed">
+        <parent link = "base_link"/>
+        <child link = "chassis"/>
+        <origin xyz = "0 -0.1 -0.45"/>
+    </joint>
+
+<link name="motor_driver">
+    <visual>
+      <geometry>
+        <box size="0.18 .18 .15"/>
+      </geometry>
+      <origin rpy=" 0 0 0.7853" xyz="0 0 0"/>
+      <material name="blue">
+      <color rgba = "0 0 0.8 1" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="base_to_motor_driver" type="fixed">
+    <parent link="chassis"/>
+    <child link="motor_driver"/>
+    <origin xyz="0 0.1 0.075"/>
+  </joint>
+
+<link name = "motor_axis">
+    <visual>
+        <geometry>
+            <cylinder length = "0.6" radius= "0.025" />
+        </geometry>
+        <material name = "gray">
+            <color rgba = "0.5 0.5 0.5 1" />
+        </material>
+    </visual>
+</link>
+
+<link name = "motor_axis2">
+    <visual>
+        <geometry>
+            <cylinder length = "0.6" radius= "0.025" />
+        </geometry>
+        <material name = "gray" />
+    </visual>
+</link>
+
+
+<joint name = "motor_driver_to_motor_axis" type = "fixed">
+    <parent link = "motor_driver"/>
+    <child link = "motor_axis" />
+    <origin xyz = "0 0 -0.15" rpy = "1.57 0 0.7853" />
+</joint>
+
+
+
+<joint name = "motor_driver_to_motor_axis2" type = "fixed">
+    <parent link = "motor_driver"/>
+    <child link = "motor_axis2" />
+    <origin xyz = "0 0 -0.15" rpy = "1.57 0 -0.7853" />
+</joint>
+
+<link name = "wheel1">
+<visual>
+    <geometry>
+    <cylinder length = "0.025" radius = "0.06" />
+
+    </geometry>
+    <material name = "blue" />
+</visual>
+</link>
+
+<joint name = "axis1_to_wheel1" type = "fixed">
+    <parent link = "motor_axis" />
+    <child link = "wheel1" />
+    <origin xyz = "0.3 0 0" rpy = "0 1.57 0" />
+</joint>
+
+
+<link name = "wheel2">
+<visual>
+    <geometry>
+    <cylinder length = "0.025" radius = "0.06" />
+    </geometry>
+    <material name = "blue" />
+
+</visual>
+</link>
+
+<joint name = "axis1_to_wheel2" type = "fixed">
+    <parent link = "motor_axis" />
+    <child link = "wheel2" />
+    <origin xyz = "0 0 0.3" rpy = "0 0 0" />
+</joint>
+
+
+<link name = "wheel3">
+<visual>
+    <geometry>
+    <cylinder length = "0.025" radius = "0.06" />
+
+    </geometry>
+    <material name = "blue" />
+</visual>
+</link>
+
+<joint name = "axis2_to_wheel3" type = "fixed">
+    <parent link = "motor_axis2" />
+    <child link = "wheel3" />
+    <origin xyz = "-0.3 0 0" rpy = "0 1.57 0" />
+</joint>
+
+
+<link name = "wheel4">
+<visual>
+    <geometry>
+    <cylinder length = "0.025" radius = "0.06" />
+    </geometry>
+    <material name = "blue" />
+
+</visual>
+</link>
+
+<joint name = "axis2_to_wheel4" type = "fixed">
+    <parent link = "motor_axis2" />
+    <child link = "wheel4" />
+    <origin xyz = "0 0 0.3" rpy = "0 0 0" />
+</joint>
+
+<link name = "camera_holder">
+<visual>
+    <geometry>
+        <box size = "0.3 0.3 0.01" />
+    </geometry>
+    <material name = "gray" />
+</visual>
+</link>
+
+<joint name = "base_link_to_camera" type = "fixed">
+    <parent link = "base_link" />
+    <child link = "camera_holder" />
+    <origin xyz = "0 0 0.65" rpy = "0 0 0.7853"/>
+
+</joint>
+
+<link name = "laser_scan_sensor_link">
+    <visual>
+    <geometry>
+        <cylinder length = "0.05" radius = "0.025" />
+    </geometry>
+    <material name = "blue" />
+
+    </visual>
+</link>
+
+<joint name = "camera_holder_to_laser_scan_sensor" type = "fixed">
+    <parent link = "camera_holder" />
+    <child link = "laser_scan_sensor_link" />
+    <origin xyz = "0 0 0.025" rpy = "0 0 -0.7853" />
+
+</joint>
+
+
+<sensor name="ray_sensor" update_rate="20">
+    <parent link="laser_scan_sensor_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+         <ray>
+            <horizontal samples="100" resolution="1" min_angle="-1.5708" max_angle="1.5708"/>
+            <vertical samples="1" resolution="1" min_angle="0" max_angle="0"/>
+         </ray>
+</sensor>
+
+
+<link name = "arm_holder">
+<visual>
+    <geometry>
+        <box size = "0.2 0.2 0.025" />
+    </geometry>
+    <material name = "gray" />
+
+</visual>
+</link>
+
+<joint name = "base_link_to_arm_holder" type = "prismatic">
+    <origin xyz="0 0 0.3" rpy = "0 0 0"/>
+    <parent link = "base_link" />
+    <child link = "arm_holder" />
+    <axis xyz="0 0 1" />
+    <limit effort = "30" velocity = "1.0" lower = "-0.1" upper = "0.1" />
+</joint>
+
+<link name = "arm_holder1">
+    <visual>
+        <geometry>
+            <box size = "0.05 0.05 0.05" />
+        </geometry>
+        <material name = "blue" />
+    </visual>
+</link>
+
+<joint name = "arm_holder_to_arm_holder1" type = "fixed">
+    <origin xyz = "0 0.1 0" rpy = "0 0 0" />
+    <parent link = "arm_holder" />
+    <child link = "arm_holder1" />
+
+</joint>
+
+<link name = "arm0">
+    <visual>
+        <geometry>
+            <box size = "0.05 0.05 0.05" />
+        </geometry>
+        <material name = "blue" />
+    </visual>
+</link>
+
+
+<joint name = "holder_to_arm0" type = "revolute">
+    <origin xyz = "0 0 0" rpy = "0 0 0" />
+    <limit effort = "30" velocity = "1.0" lower = "-1.57" upper = "1.57" />
+    <parent link = "arm_holder1" />
+    <child link = "arm0" />
+    <axis xyz = "0 0 1" />
+</joint>
+
+<link name = "arm1">
+    <visual>
+        <origin xyz = "0 0.1 0" rpy = "1.57 0 0" />
+        <geometry>
+            <box size = "0.05 0.05 0.20" />
+        </geometry>
+        <material name = "white" />
+   </visual>
+</link>
+
+<joint name = "arm0_to_arm1" type = "revolute">
+    <origin xyz = "0 0 0" rpy = " 0 0  0" />
+    <limit effort = "30" velocity = "1.0" lower = "-1.57" upper = "1.57" />
+    <parent link = "arm0" />
+    <child link = "arm1" />
+    <axis xyz = "1 0 0" />
+
+</joint>
+
+<link name = "arm2">
+    <visual>
+        <origin xyz = "0 0.1 0" rpy = "1.57 0 0" />
+        <geometry>
+            <box size = "0.05 0.05 0.20" />
+        </geometry>
+
+        <material name = "blue" />
+    </visual>
+</link>
+
+<joint name = "arm1_to_arm2" type = "revolute">
+    <origin xyz = "0 0.2 0" rpy= "0 0 0" />
+
+    <limit effort = "30" velocity = "1.0" lower = "-1.57" upper = "1.57" />
+    <parent link = "arm1" />
+    <child link = "arm2" />
+    <axis xyz = "1 0 0" />
+
+</joint>
+
+<link name = "arm3">
+    <visual>
+        <origin xyz = "0 0.1 0" rpy = "1.57 0 0" />
+        <geometry>
+            <box size = "0.05 0.05 0.20" />
+        </geometry>
+
+        <material name = "white" />
+    </visual>
+</link>
+
+<joint name = "arm2_to_arm3" type = "revolute">
+    <origin xyz = "0 0.2 0" rpy= "0 0 0" />
+
+    <limit effort = "30" velocity = "1.0" lower = "-1.57" upper = "1.57" />
+    <parent link = "arm2" />
+    <child link = "arm3" />
+    <axis xyz = "1 0 0" />
+
+</joint>
+</robot>
