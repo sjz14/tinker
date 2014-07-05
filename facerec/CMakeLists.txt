@@ -6,12 +6,12 @@ project(facerec)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
+  image_transport
   roscpp
   rospy
   std_msgs
   std_srvs
   roslib
-  image_transport
 )
 find_package(OpenCV)
 ## System dependencies are found with CMake's conventions
@@ -101,7 +101,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   include
-  include/reading_image
 )
 
 
@@ -115,12 +114,11 @@ include_directories(
 # add_executable(facerec_node src/facerec_node.cpp)
 
   link_directories(${OpenCV_LIBS_DIR})
-  ADD_EXECUTABLE(tracker src/CLM;src/facerec;src/FCheck;src/FDet;src/IO;src/Patch;src/PAW;src/PDM;src/Tracker;src/utils)
+  ADD_EXECUTABLE(tracker src/reading_image/reading_image;src/CLM;src/facerec;src/FCheck;src/FDet;src/IO;src/Patch;src/PAW;src/PDM;src/Tracker;src/utils)
   ADD_EXECUTABLE(test src/test;src/utils)
   ADD_EXECUTABLE(train src/train;src/utils)
-  ADD_EXECUTABLE(facerec_node src/main;src/Recognizer;src/CLM;src/FCheck;src/FDet;src/IO;src/Patch;src/PAW;src/PDM;src/Tracker;src/utils)
+  ADD_EXECUTABLE(facerec_node src/reading_image/reading_image;src/main;src/Recognizer;src/CLM;src/FCheck;src/FDet;src/IO;src/Patch;src/PAW;src/PDM;src/Tracker;src/utils)
   target_link_libraries(tracker ${OpenCV_LIBS}
-  reading_image
   )
   target_link_libraries(test ${OpenCV_LIBS})
   target_link_libraries(train ${OpenCV_LIBS})
@@ -130,7 +128,6 @@ include_directories(
   target_link_libraries(facerec_node ${OpenCV_LIBS})
 ## Add cmake target dependencies of the executable/library
   target_link_libraries(facerec_node ${catkin_LIBRARIES}
-  reading_image
   )
   
 
