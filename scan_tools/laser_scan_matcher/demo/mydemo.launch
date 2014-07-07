@@ -6,13 +6,7 @@ Example launch file: launches the scan matcher with pre-recorded data
 
   #### set up data playback from bag #############################
 
-  <param name="/use_sim_time" value="true"/>
-
-  <node pkg="rviz" type="rviz" name="rviz" 
-    args="-d $(find laser_scan_matcher)/demo/demo.rviz"/>
-
-  <node pkg="rosbag" type="play" name="play" 
-    args="$(find laser_scan_matcher)/demo/demo.bag --delay=5 --clock"/>
+  <param name="/use_sim_time" value="false"/>
 
   #### publish an example base_link -> laser transform ###########
 
@@ -22,9 +16,11 @@ Example launch file: launches the scan matcher with pre-recorded data
   #### start the laser scan_matcher ##############################
 
   <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" 
-    name="laser_scan_matcher_node" output="screen">
+    name="laser_scan_matcher_node" output="screen" >
 
     <param name="max_iterations" value="10"/>
+
+    <param name="publish_tf" value="true" />
 
   </node>
 
