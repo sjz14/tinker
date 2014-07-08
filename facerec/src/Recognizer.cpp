@@ -10,7 +10,7 @@
 #include <ros/ros.h>
 #include "std_msgs/String.h"
 #include <fstream>
-
+#include "reading_image/reading_image.h"
 void Recognizer::callBack(const std_msgs::String::ConstPtr& msg)
 {
     printf ("%s\n",msg->data.c_str());

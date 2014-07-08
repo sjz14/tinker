@@ -5,7 +5,12 @@ project(tinker_2dnav)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-#  move_base
+  hokuyo_node
+  move_base
+  robot_setup_tf
+  sensor_config
+  tinker_odom
+  urdf_tinker
 )
 
 ## System dependencies are found with CMake's conventions
@@ -80,7 +85,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tinker_2dnav
-#  CATKIN_DEPENDS move_base
+#  CATKIN_DEPENDS hokuyo_node move_base robot_setup_tf sensor_config tinker_odom urdf_tinker
 #  DEPENDS system_lib
 )
 
