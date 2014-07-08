@@ -24,6 +24,10 @@ Ubuntu 12.04.3, 内核版本 3.8.0-29<br />
 从win驱动光盘得到 SmiUsbGrabber3C.sys <br />
 <br />
 编译源代码下 kernel 文件夹，得到 smi2021\_bootloader.ko smi2021.ko<br />
-用 modprobe 命令加载 .ko 文件，如果失败用 dmesg 查看依赖关系<br />
+拷贝 .ko 文件到 /lib/modules/内核版本/kernel 下。<br />
+<br />
+注意：升级内核版本后需要重新编译、加载。 uname -a 查看内核版本。<br />
+<br />
+运行 depmod，用 modprobe 命令加载 .ko 文件，如果失败用 dmesg 查看依赖关系<br />
 <br />
 <br />

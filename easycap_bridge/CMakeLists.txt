@@ -112,10 +112,10 @@ include_directories(
 ## Declare a cpp executable
 # add_executable(easycap_bridge_node src/easycap_bridge_node.cpp)
 add_executable(easycap_bridge_node src/easycap_bridge.cpp)
-add_executable(test_show_a src/test_show_a.cpp)
-add_executable(test_show_b src/test_show_b.cpp)
-add_executable(test_send_a src/test_send_a.cpp)
-add_executable(test_send_b src/test_send_b.cpp)
+add_executable(test_show_a test/test_show_a.cpp)
+add_executable(test_show_b test/test_show_b.cpp)
+add_executable(test_send_a test/test_send_a.cpp)
+add_executable(test_send_b test/test_send_b.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
