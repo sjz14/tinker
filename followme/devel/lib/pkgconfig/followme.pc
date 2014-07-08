@@ -1,0 +1,8 @@
+prefix=/home/gjq/catkin_ws/src/followme/devel
+
+Name: followme
+Description: Description of followme
+Version: 0.0.0
+Cflags: -I/home/gjq/catkin_ws/src/followme/include
+Libs: -L/home/gjq/catkin_ws/src/followme/devel/lib 
+Requires: 

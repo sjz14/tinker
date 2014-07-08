@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/gjq/catkin_ws/src/followme/devel/setup.sh
