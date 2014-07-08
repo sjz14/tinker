@@ -14,7 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
 )
 find_package(OpenCV)
-#SET(OPENCV_DIR ~/opencv-2.4.9/release)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

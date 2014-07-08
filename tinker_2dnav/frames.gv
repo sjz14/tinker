@@ -1,0 +1,20 @@
+digraph G {
+"arm_holder" -> "arm_holder1"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"base_link" -> "arm_holder"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.209 Hz\nMost recent transform: 1404747120.654 \nBuffer length: 4.800 sec\n"];
+"motor_axis" -> "wheel1"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"motor_driver" -> "motor_axis"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"motor_axis" -> "wheel2"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"motor_axis2" -> "wheel3"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"motor_driver" -> "motor_axis2"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"motor_axis2" -> "wheel4"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"base_link" -> "camera_holder"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"odom" -> "base_link"[label="Broadcaster: /odometry_publisher\nAverage rate: 1.250 Hz\nMost recent transform: 1404747120.313 \nBuffer length: 4.000 sec\n"];
+"base_link" -> "chassis"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"chassis" -> "motor_driver"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"camera_holder" -> "laser"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.201 Hz\nMost recent transform: 1404747121.221 \nBuffer length: 4.940 sec\n"];
+"arm0" -> "arm1"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.209 Hz\nMost recent transform: 1404747120.654 \nBuffer length: 4.800 sec\n"];
+"arm_holder1" -> "arm0"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.209 Hz\nMost recent transform: 1404747120.654 \nBuffer length: 4.800 sec\n"];
+"arm1" -> "arm2"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.209 Hz\nMost recent transform: 1404747120.654 \nBuffer length: 4.800 sec\n"];
+"arm2" -> "arm3"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.209 Hz\nMost recent transform: 1404747120.654 \nBuffer length: 4.800 sec\n"];
+"map" -> "odom"[label="Broadcaster: /amcl\nAverage rate: 10.120 Hz\nMost recent transform: 1404747120.390 \nBuffer length: 4.941 sec\n"];
+}

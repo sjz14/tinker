@@ -9,7 +9,7 @@
 #include "SRC/utils.hpp"
 #include <ros/package.h>
 #include <ros/ros.h>
-#include "reading_image.h"
+#include "reading_image/reading_image.h"
 #include "std_msgs/String.h"
 
 class Recognizer
