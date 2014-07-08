@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "followme")
+set(followme_MAINTAINER "g <bssda03@gmail.com>")
+set(followme_DEPRECATED "")
+set(followme_VERSION "0.0.0")
+set(followme_BUILD_DEPENDS "roscpp" "rospy" "std_msgs" "opencv2" "message_generation" "frmsg")
+set(followme_RUN_DEPENDS "message_runtime" "roscpp" "rospy" "std_msgs" "opencv2" "frmsg")
+set(followme_BUILDTOOL_DEPENDS "catkin")
