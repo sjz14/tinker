@@ -52,7 +52,7 @@ int main(int argc, char ** argv)
 {
         ros::init(argc, argv, "parser_rm");
         ros::NodeHandle n;
-        ros::Subscriber sub = n.subscribe("/tr/cmd_vel",1000,parserCallback);
+        ros::Subscriber sub = n.subscribe("/cmd_vel",1000,parserCallback);
         //ros::Subscriber sub = n.subscribe("dec",10,parserCallback);
         ros::Publisher  pub = n.advertise<std_msgs::String>("order", 1000);
         p = &pub;
