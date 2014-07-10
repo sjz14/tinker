@@ -1,7 +1,8 @@
 // Project      : openni_pcl_grabber
 // File         : show_pts.cpp
+// Author       : bss
 // Creation Date: 2014-07-09
-// Last modified: 2014-07-09, 03:04:49
+// Last modified: 2014-07-11, 00:57:27
 // Description  : 显示 openni 中提取的 pcl
 // 
 
@@ -10,6 +11,7 @@
 #include <pcl/point_types.h>
 #include <pcl/io/openni_grabber.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <stdio.h>
 
 typedef pcl::PointXYZRGBA PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
@@ -30,6 +32,8 @@ void cloud_cb_(const PointCloudT::ConstPtr& callback_cloud, PointCloudT::Ptr& cl
 
 int main(int argc, char** argv)
 {
+    int total_frame = 0;
+
     ros::init(argc, argv, "pub_pcl");
     ros::NodeHandle nh;
     ros::Publisher pub = nh.advertise<PointCloudT>("/openni/points2", 1);
@@ -50,9 +54,12 @@ int main(int argc, char** argv)
     cloud_mutex.lock();     // for not overwriting the point cloud
 
     // Display
+    printf("frame %d\n", ++total_frame);
     pcl::visualization::PointCloudColorHandlerRGBField<PointT> rgb(cloud);
     viewer.addPointCloud<PointT>(cloud, rgb, "input_cloud");
     viewer.setCameraPosition(0, 0, -2, 0, -1, 0, 0);
+
+    cloud_mutex.unlock();
 
     ros::Rate loop_rate(4);
     while (nh.ok())
@@ -65,12 +72,17 @@ int main(int argc, char** argv)
             new_cloud_avaliable_flag = false;
             pub.publish(cloud);
 
+            printf("frame %d\n", ++total_frame);
             viewer.removeAllPointClouds();
             viewer.removeAllShapes();
             pcl::visualization::PointCloudColorHandlerRGBField<PointT> rgb(cloud);
             viewer.addPointCloud<PointT>(cloud, rgb, "input_cloud");
 
             cloud_mutex.unlock();
+        }
+        else
+        {
+            printf("no %d\n", total_frame);
         }
 
         ros::spinOnce();
