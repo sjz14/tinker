@@ -1,18 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(detecting_people)
+project(followme_ctrl)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
-  pcl_ros
-  pcl_conversions
 )
-find_package(OpenCV)
-find_package(PCL 1.7 REQUIRED)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -83,9 +79,9 @@ find_package(PCL 1.7 REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES detecting_people
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  INCLUDE_DIRS include
+#  LIBRARIES followme_ctrl
+#  CATKIN_DEPENDS roscpp std_msgs
 #  DEPENDS system_lib
 )
 
@@ -95,32 +91,25 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
+# include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
 )
-link_directories(
-  ${PCL_LIBRARY_DIRS}
-)
-add_definitions(${PCL_DEFINITIONS})
-add_executable(detecting_people src/main_ground_based_people_detection.cpp)
-target_link_libraries(detecting_people ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
 ## Declare a cpp library
-# add_library(detecting_people
-#   src/${PROJECT_NAME}/detecting_people.cpp
+# add_library(followme_ctrl
+#   src/${PROJECT_NAME}/followme_ctrl.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(detecting_people_node src/detecting_people_node.cpp)
+# add_executable(followme_ctrl_node src/followme_ctrl_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(detecting_people_node detecting_people_generate_messages_cpp)
+# add_dependencies(followme_ctrl_node followme_ctrl_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(detecting_people_node
+# target_link_libraries(followme_ctrl_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -139,18 +128,18 @@ target_link_libraries(detecting_people ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${Op
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS detecting_people detecting_people_node
+# install(TARGETS followme_ctrl followme_ctrl_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
 ## Mark cpp header files for installation
- install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
-   PATTERN ".svn" EXCLUDE
- )
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -164,7 +153,7 @@ target_link_libraries(detecting_people ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${Op
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_detecting_people.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_followme_ctrl.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
