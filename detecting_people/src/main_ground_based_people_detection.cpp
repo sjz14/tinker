@@ -304,6 +304,10 @@ pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
 
 int main (int argc, char** argv)
 {
+  ros::init(argc, argv, "DetectingPeople");
+  ros::NodeHandle nh;
+  // ros::Subscriber state_sub = nh.subscribe("followme_state", 100, stateCallback);
+  // ros::Publisher people_pub = ng.advertise<followme_msgs::people>("followme_people", 100);
   if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
         return print_help();
 
