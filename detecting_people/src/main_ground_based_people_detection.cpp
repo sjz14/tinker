@@ -60,6 +60,7 @@
 #include <ros/ros.h>
 #include <ros/package.h>
 #include "frmsg/people.h"
+#include "frmsg/followme_state.h"
 //#include <opencv2/opencv.hpp>
 
 typedef pcl::PointXYZRGBA PointT;
@@ -319,7 +320,7 @@ int main (int argc, char** argv)
   ros::init(argc, argv, "DetectingPeople");
   ros::NodeHandle nh;
   ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
-  ros::Publisher people_pub = ng.advertise<frmsg::people>("followme_people", 100);
+  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 100);
   if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
         return print_help();
 

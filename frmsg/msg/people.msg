@@ -1,4 +1,4 @@
 Header header
-float x
-float y
-float depth
+float32 x
+float32 y
+float32 depth

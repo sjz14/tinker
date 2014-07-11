@@ -114,6 +114,9 @@ add_executable(followme_ctrl_node src/followme_ctrl_node.cpp)
 # target_link_libraries(followme_ctrl_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(followme_ctrl_node
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
