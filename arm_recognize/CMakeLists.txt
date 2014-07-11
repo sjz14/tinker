@@ -8,7 +8,10 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   roscpp
   std_msgs
+  image_transport
+  reading_image
 )
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -105,6 +108,8 @@ include_directories(
 ## Declare a cpp executable
 # add_executable(arm_recognize_node src/arm_recognize_node.cpp)
 add_executable(arm_recognize_node src/main2.cpp)
+add_executable(test_recognize_static_img test/recognize_img.cpp)
+add_executable(test_show_hand test/show_hand.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -115,6 +120,16 @@ add_executable(arm_recognize_node src/main2.cpp)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(arm_recognize_node
+  reading_image
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(test_recognize_static_img
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(test_show_hand
+  reading_image
   ${catkin_LIBRARIES}
 )
 

@@ -1,7 +1,7 @@
 // Project      : arm_recognize
-// File         : main2.cpp
+// File         : recognize_img.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-11, 12:22:06
+// Last modified: 2014-07-11, 11:55:47
 
 #include <stdlib.h>
 #include <iostream>
@@ -11,12 +11,9 @@
 //#include <XnCppWrapper.h>
 #include "opencv/cv.h"
 #include "opencv/highgui.h"
-#include "reading_image/reading_image.h"
 
 using namespace std;
 using namespace cv;
-
-ImageConverter* ic_ = NULL;
 
 void handRec(Mat I)
 {
@@ -66,39 +63,16 @@ void handRec(Mat I)
 
 int main()
 {
-    ros::Rate rate(3);
-    ic_ = new ImageConverter();
-
-    // Init
-    while (!ic_->ready)
+    for (int i = 101; i<=102; i++)
     {
-        ros::spinOnce();
-        rate.sleep();
-        if (!ros::ok())
-        {
-            printf("Terminated by C-c when init.\n");
-            return -1;
-        }
-    }
-
-    // Loop
-    Mat img;
-    while (ros::ok())
-    {
-        ic_->curr_image.copyTo(img);
+        char fName[20];
+        sprintf(fName, "images/RGB%d.jpg", i);
+        Mat img = imread(fName);
         cvNamedWindow("0");
         imshow("0",img);
         handRec(img);
-
         cvWaitKey(0);
-        while (!ic_->ready && ros::ok())
-        {
-            ros::spinOnce();
-        }
-        rate.sleep();
     }
-    delete ic_;
-    ic_ = NULL;
 }
 
 
