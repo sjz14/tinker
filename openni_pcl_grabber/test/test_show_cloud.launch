@@ -1,0 +1,17 @@
+<!-- Project      : openni_pcl_grabber -->
+<!-- File         : test_show_cloud.launch -->
+<!-- created by bss at 2014-07-12 -->
+<!-- Last modified: 2014-07-12, 01:24:40
+    !-->
+
+
+<launch>
+
+  <!-- convert cloud to image -->
+  <include file="$(find openni_pcl_grabber)/test/test_convert_cloud_to_image.launch" />
+
+  <node pkg="image_view" name="image_view" type="image_view" output="screen">
+    <remap from="image" to="/openni/points2_image" />
+  </node>
+
+</launch>
