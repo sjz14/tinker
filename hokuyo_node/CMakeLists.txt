@@ -19,6 +19,7 @@ find_package(catkin REQUIRED
     roscpp
     self_test
     sensor_msgs
+    roslib
 )
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
@@ -42,9 +43,9 @@ target_link_libraries(libhokuyo ${rosconsole_LIBRARIES})
 add_executable(hokuyo_node src/hokuyo_node.cpp)
 add_dependencies(hokuyo_node ${PROJECT_NAME}_gencfg)
 target_link_libraries(hokuyo_node
+${catkin_LIBRARIES}
   libhokuyo
   ${Boost_LIBRARIES}
-  ${catkin_LIBRARIES}
 )
 
 add_executable(getID src/getID.cpp)

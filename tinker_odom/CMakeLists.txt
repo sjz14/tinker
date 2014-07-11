@@ -106,8 +106,9 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(tinker_odom_node src/main.cpp)
 
+add_executable(tinker_odom_node src/main.cpp)
+add_executable(tinker_odom_node2 src/main2.cpp)
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(tinker_odom_node tinker_odom_generate_messages_cpp)
@@ -117,6 +118,9 @@ target_link_libraries(tinker_odom_node
    ${catkin_LIBRARIES}
  )
 
+target_link_libraries(tinker_odom_node2
+   ${catkin_LIBRARIES}
+ )
 #############
 ## Install ##
 #############

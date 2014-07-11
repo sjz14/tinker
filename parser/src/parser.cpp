@@ -11,40 +11,19 @@ void parserCallback(const geometry_msgs::Twist::ConstPtr& msg)
 {
     ROS_INFO("get geometry");
     std::stringstream ss;
-
-    /*//added
-    std::string angle;
-    float speed;
-    float sspeed = 0;
-    if ( msg->dec == 1 )
-    {
-        angle = "g000g";
-        speed = 300;
-    }
-    else if ( msg->dec == 2 )
-    {
-        speed = 300;
-        angle = "g180g";
-    }
-    else if ( msg->dec == 3 )
-    {
-        sspeed = -45;
-    }
-    else if ( msg->dec == 4 )
-    {
-        sspeed = 45;
-    }*/
-    float x = msg->linear.x;
-    float y = msg->linear.y;
-    float th = msg->angular.z;
+    float x = msg->linear.x*1000;
+    float y = msg->linear.y*1000;
+    float th = msg->angular.z/PI*180;
     float dis = sqrt(x*x+y*y);
     float angle = atan2(y,x);
     if (angle<0) angle+=2*PI;
     char c = '0';
     if (th<0) c = '-';
-    ss<<"sfg"<<std::setfill('0')<<std::setw(3)<<(int)(dis*100)<<"g"<<std::setw(3)<<int(angle/PI*180)<<"g"<<c<<std::setfill('0')<<std::setw(2)<<(int)(th*10)<<"g000e";
+    th = abs(th);
+    ss<<"sfg"<<std::setfill('0')<<std::setw(3)<<(int)(dis)<<"g"<<std::setw(3)<<int(angle/PI*180)<<"g"<<c<<std::setfill('0')<<std::setw(2)<<(int)(th)<<"g000e";
     std_msgs::String mesg;
     mesg.data = ss.str();
+    ROS_INFO("sending:%s", ss.str().c_str());
     if (p) p->publish(mesg);
     return;
 }

@@ -35,13 +35,12 @@
 #include "driver_base/driver.h"
 #include "driver_base/driver_node.h"
 #include <diagnostic_updater/publisher.h>
-
 #include <assert.h>
 #include <math.h>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-
+#include <fstream>
 #include "ros/ros.h"
 
 #include "sensor_msgs/LaserScan.h"
@@ -49,6 +48,9 @@
 #include "hokuyo_node/HokuyoConfig.h"
 
 #include "hokuyo_node/hokuyo.h"
+#include "ros/package.h"
+#include <string>
+
 
 using namespace std;
 
@@ -64,16 +66,16 @@ class HokuyoDriver : public driver_base::Driver
   std::string device_status_;
   std::string device_id_;
   std::string last_seen_device_id_;
-  
+
   bool first_scan_;
 
   std::string vendor_name_;
   std::string product_name_;
   std::string protocol_version_;
   std::string firmware_version_;
-  
+
   std::string connect_fail_;
-  
+
   hokuyo::LaserScan  scan_;
   hokuyo::Laser laser_;
   hokuyo::LaserConfig laser_config_;
@@ -102,16 +104,16 @@ public:
       changed = true;
       if (laser_config_.min_angle - conf.min_ang > 1e-10)  /// @todo Avoids warning when restarting node pending ros#2353 getting fixed.
       {
-        ROS_WARN("Requested angle (%f rad) out of range, using minimum scan angle supported by device: %f rad.", 
+        ROS_WARN("Requested angle (%f rad) out of range, using minimum scan angle supported by device: %f rad.",
             conf.min_ang, laser_config_.min_angle);
       }
       conf.min_ang = laser_config_.min_angle;
-    }                                    
-    
+    }
+
     double max_safe_angular_range_per_cluster_deg = 95;
     if (firmware_version_ == "1.16.01(16/Nov./2009)")
       max_safe_angular_range_per_cluster_deg = 190;
-    
+
     int real_cluster = conf.cluster == 0 ? 1 : conf.cluster;
     double max_safe_angular_range = (real_cluster * max_safe_angular_range_per_cluster_deg) * M_PI / 180;
 
@@ -127,25 +129,25 @@ public:
     if (conf.max_ang - laser_config_.max_angle > 1e-10)   /// @todo Avoids warning when restarting node pending ros#2353 getting fixed.
     {
       changed = true;
-      ROS_WARN("Requested angle (%f rad) out of range, using maximum scan angle supported by device: %f rad.", 
+      ROS_WARN("Requested angle (%f rad) out of range, using maximum scan angle supported by device: %f rad.",
           conf.max_ang, laser_config_.max_angle);
       conf.max_ang = laser_config_.max_angle;
     }
-    
+
     if (conf.min_ang > conf.max_ang)
     {
       changed = true;
       if (conf.max_ang < laser_config_.min_angle)
       {
         if (laser_config_.min_angle - conf.max_ang > 1e-10)  /// @todo Avoids warning when restarting node pending ros#2353 getting fixed.
-          ROS_WARN("Requested angle (%f rad) out of range, using minimum scan angle supported by device: %f rad.", 
+          ROS_WARN("Requested angle (%f rad) out of range, using minimum scan angle supported by device: %f rad.",
               conf.max_ang, laser_config_.min_angle);
         conf.max_ang = laser_config_.min_angle;
       }
       ROS_WARN("Minimum angle must be greater than maximum angle. Adjusting min_ang.");
       conf.min_ang = conf.max_ang;
-    }                                    
-      
+    }
+
     return changed;
   }
 
@@ -168,9 +170,9 @@ public:
       device_id_ = "unknown";
       device_status_ =  "unknown";
       first_scan_ = true;
-      
+
       laser_.open(config_.port.c_str());
-      
+
       device_id_ = getID();
       vendor_name_ = laser_.getVendorName();
       firmware_version_ = laser_.getFirmwareVersion();
@@ -184,11 +186,11 @@ public:
         setStatusMessagef("Laser returned abnormal status message, aborting: %s You may be able to find further information at http://www.ros.org/wiki/hokuyo_node/Troubleshooting/", device_status_.c_str());
         return;
       }
-      
+
       if (old_device_id != device_id_)
       {
         ROS_INFO("Connected to device with ID: %s", device_id_.c_str());
-        
+
         if (last_seen_device_id_ != device_id_)
         {
           // Recalibrate when the device changes.
@@ -203,7 +205,7 @@ public:
             break;
           }
         catch (hokuyo::Exception &e)
-        { 
+        {
           if (!retries)
             throw e; // After trying for 10 seconds, give up and throw the exception.
           else if (retries == 10)
@@ -229,10 +231,10 @@ public:
 
       setStatusMessage("Device opened successfully.", true);
       laser_.getConfig(laser_config_);
-      
+
       state_ = OPENED;
-    } 
-    catch (hokuyo::Exception& e) 
+    }
+    catch (hokuyo::Exception& e)
     {
       doClose();
       setStatusMessagef("Exception thrown while opening Hokuyo.\n%s", e.what());
@@ -249,7 +251,7 @@ public:
     } catch (hokuyo::Exception& e) {
       setStatusMessagef("Exception thrown while trying to close:\n%s",e.what());
     }
-    
+
     state_ = CLOSED; // If we can't close, we are done for anyways.
   }
 
@@ -258,7 +260,7 @@ public:
     try
     {
       laser_.laserOn();
-      
+
       int status = laser_.requestScans(config_.intensity, config_.min_ang, config_.max_ang, config_.cluster, config_.skip);
 
       if (status != 0) {
@@ -266,12 +268,12 @@ public:
         corrupted_scan_count_++;
         return;
       }
-    
+
       setStatusMessagef("Waiting for first scan.", true);
       state_ = RUNNING;
       scan_thread_.reset(new boost::thread(boost::bind(&HokuyoDriver::scanThread, this)));
-    } 
-    catch (hokuyo::Exception& e) 
+    }
+    catch (hokuyo::Exception& e)
     {
       doClose();
       setStatusMessagef("Exception thrown while starting Hokuyo.\n%s", e.what());
@@ -293,7 +295,7 @@ public:
       lost_scan_thread_count_++;
     }
     scan_thread_.reset();
-    
+
     setStatusMessagef("Stopped.", true);
   }
 
@@ -308,8 +310,8 @@ public:
   void config_update(Config &new_config, int level = 0)
   {
     ROS_DEBUG("Reconfigure called from state %i", state_);
-    
-    if (state_ == OPENED) 
+
+    if (state_ == OPENED)
       // If it is closed, we don't know what to check for. If it is running those parameters haven't changed,
       // and talking to the hokuyo would cause loads of trouble.
     {
@@ -365,9 +367,9 @@ public:
 
 class HokuyoNode : public driver_base::DriverNode<HokuyoDriver>
 {
-private:   
+private:
   string connect_fail_;
-  
+
   double desired_freq_;
 
   ros::NodeHandle node_handle_;
@@ -406,10 +408,10 @@ public:
 
     diagnostic_.setHardwareID(driver_.getID());
 
-    if (driver_.checkIntensitySupport(driver_.config_) || 
+    if (driver_.checkIntensitySupport(driver_.config_) ||
         driver_.checkAngleRange(driver_.config_)) // Might have been set before the device's range was known.
       reconfigure_server_.updateConfig(driver_.config_);
-    
+
     scan_pub_.clear_window(); // Reduce glitches in the frequency diagnostic.
   }
 
@@ -424,18 +426,18 @@ public:
   }
 
   virtual void addStoppedTests()
-  { 
+  {
   }
 
   virtual void addRunningTests()
-  { 
+  {
   }
 
   virtual void addDiagnostics()
   {
     driver_status_diagnostic_.addTask(&hokuyo_diagnostic_task_);
   }
-  
+
   void reconfigureHook(int level)
   {
     if (private_node_handle_.hasParam("frameid"))
@@ -458,8 +460,8 @@ public:
       driver_.config_.max_ang *= M_PI/180;
     }
 
-    diagnostic_.force_update();   
-    
+    diagnostic_.force_update();
+
     scan_pub_.clear_window(); // Reduce glitches in the frequency diagnostic.
   }
 
@@ -478,7 +480,7 @@ public:
     scan_msg_.intensities = scan.intensities;
     scan_msg_.header.stamp = ros::Time().fromNSec((uint64_t)scan.system_time_stamp) + ros::Duration(driver_.config_.time_offset);
     scan_msg_.header.frame_id = driver_.config_.frame_id;
-  
+
     desired_freq_ = (1. / scan.config.scan_time);
 
     scan_pub_.publish(scan_msg_);
@@ -503,7 +505,7 @@ public:
     }
     else if (driver_.state_ == driver_.OPENED)
       status.summary(0, "Open");
-    else 
+    else
       status.summary(2, "Unknown state");
 
     status.add("Device Status", driver_.device_status_);
@@ -639,7 +641,7 @@ public:
 };
 
 int main(int argc, char **argv)
-{ 
-  return driver_base::main<HokuyoNode>(argc, argv, "hokuyo_node");
+{
+    return driver_base::main<HokuyoNode>(argc, argv, "hokuyo_node");
 }
 
