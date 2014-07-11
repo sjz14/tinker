@@ -75,7 +75,7 @@ LaserScanMatcher::LaserScanMatcher(ros::NodeHandle nh, ros::NodeHandle nh_privat
   {
     pose_stamped_publisher_ = nh_.advertise<geometry_msgs::PoseStamped>(
       "pose_stamped", 5);
-  }
+  }oo9
 
   // *** subscribers
 
@@ -104,7 +104,7 @@ LaserScanMatcher::LaserScanMatcher(ros::NodeHandle nh, ros::NodeHandle nh_privat
   {
     vel_subscriber_ = nh_.subscribe(
       "vel", 1, &LaserScanMatcher::velCallback, this);
-  }
+  }                                                                                
 }
 
 LaserScanMatcher::~LaserScanMatcher()
