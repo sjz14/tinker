@@ -1,12 +1,12 @@
 // project:     followme
 // file:        test_reading_image.cpp
 // created by bss at 2013-12-21
-// last edit: by bss at 2013-12-21
+// Last modified: 2014-07-11, 10:28:57
 // description: 
 
 #include "ros/ros.h"
 #include <opencv2/opencv.hpp>
-#include "reading_image.h"
+#include "reading_image/reading_image.h"
 
 int main(int argc, char** argv)
 {

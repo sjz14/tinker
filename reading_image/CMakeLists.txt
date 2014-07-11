@@ -1,20 +1,16 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(decision)
+project(reading_image)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  frmsg
-  roscpp
-  std_msgs
-  sensor_msgs
   cv_bridge
   image_transport
-  genmsg
-  reading_image
+  roscpp
+  std_msgs
 )
-find_package(OpenCV)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -51,15 +47,13 @@ find_package(OpenCV)
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
- #  box.msg
- #  dec.msg
 #   Message1.msg
 #   Message2.msg
-#)
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
-#    FILES
+#   FILES
 #   Service1.srv
 #   Service2.srv
 # )
@@ -75,8 +69,7 @@ find_package(OpenCV)
 # generate_messages(
 #   DEPENDENCIES
 #   std_msgs
-  # msg
-#)
+# )
 
 ###################################
 ## catkin specific configuration ##
@@ -89,9 +82,8 @@ find_package(OpenCV)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  message_runtime
-#  LIBRARIES decision
-#  CATKIN_DEPENDS frmsg roscpp std_msgs
+#  LIBRARIES reading_image
+#  CATKIN_DEPENDS cv_bridge image_transport roscpp std_msgs
 #  DEPENDS system_lib
 )
 
@@ -103,45 +95,33 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS}
   include
-  src
-  ${OpenCV_INFLUDE_DIRS}
-  ${reading_images_INCLUDE_DIRS}
- # ${catkin_INCLUDE_DIRS}
 )
+
 ## Declare a cpp library
-# add_library(decision src/decide.cpp)
-
-
-add_executable(decision_node src/main.cpp;src/decide.cpp)
-#target_link_libraries(decision_node
-#    ${OpenCV_LIBRARIES}
-#)
-#target_link_libraries(decision_node
-   # debug.lib
-#    decision 
-#    reading_image 
-#    ${catkin_LIBRARIES}
-#)
-target_link_libraries(decision_node
-    reading_image
-    ${catkin_LIBRARIES}
-    ${OpenCV_LIBRARIES}
+# add_library(reading_image
+#   src/${PROJECT_NAME}/reading_image.cpp
+# )
+add_library(reading_image
+  src/reading_image.cpp
 )
-#target_link_libraries(decision
-  #  ${OpenCV_LIBRARIES};
-#   ${catkin_LIBRARIES}
-#)
+
+## Declare a cpp executable
+# add_executable(reading_image_node src/reading_image_node.cpp)
+add_executable(test_reading_image test/test_reading_image.cpp)
+
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-
-# add_dependences(decision_node decision_generate_messages_cpp)
+# add_dependencies(reading_image_node reading_image_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(decision_node
+# target_link_libraries(reading_image_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(test_reading_image
+    reading_image
+    ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -158,7 +138,7 @@ target_link_libraries(decision_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS decision decision_node
+# install(TARGETS reading_image reading_image_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -183,7 +163,7 @@ target_link_libraries(decision_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_decision.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_reading_image.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
