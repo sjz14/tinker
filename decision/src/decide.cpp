@@ -1,17 +1,16 @@
 // Project:         decide
 // File:            decide.cpp
 // Created by gjq at 2014-01-15
-// Last modified: 2014-03-12, 21:40:11
+// Last modified: 2014-07-11, 10:51:50
 // Description:
 
-#include "TLD.h"
 #include <ros/ros.h>
 #include <opencv2/opencv.hpp>
 #include <ros/package.h>
-#include "reading_image.h"
 #include "decide.h"
 #include <sstream>
 //#include "frmsg/box.h"
+#include "reading_image/reading_image.h"
 
 Decide::Decide()
 	:n_(NULL)
