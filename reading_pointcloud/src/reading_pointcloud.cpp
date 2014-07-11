@@ -2,7 +2,7 @@
 // File         : reading_pointcloud.cpp
 // Author       : bss
 // Creation Date: 2014-07-12
-// Last modified: 2014-07-12, 04:06:58
+// Last modified: 2014-07-12, 05:13:52
 // Description  : convert ros-style pointcloud to pcl-style.
 // 
 
