@@ -9,7 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   sensor_msgs
+  pcl_conversions
 )
+find_package(OpenCV)
+find_package(PCL 1.7 REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -96,7 +99,15 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
   include
+)
+link_directories(
+  ${PCL_LIBRARY_DIRS}
+)
+add_definitions(
+  ${PCL_DEFINITIONS}
 )
 
 ## Declare a cpp library
@@ -111,6 +122,7 @@ add_library(reading_pointcloud
 # add_executable(reading_pointcloud_node src/reading_pointcloud_node.cpp)
 add_executable(test_sub_xyz test/sub_xyz.cpp)
 add_executable(test_sub_xyzrgb test/sub_xyzrgb.cpp)
+add_executable(test_show_xyzrgb test/show_xyzrgb.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -132,6 +144,13 @@ target_link_libraries(test_sub_xyz
 target_link_libraries(test_sub_xyzrgb
   reading_pointcloud
   ${catkin_LIBRARIES}
+)
+
+target_link_libraries(test_show_xyzrgb
+  reading_pointcloud
+  ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 
 #############
