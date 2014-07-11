@@ -59,6 +59,7 @@
 #include <math.h>
 #include <ros/ros.h>
 #include <ros/package.h>
+#include "frmsg/people.h"
 //#include <opencv2/opencv.hpp>
 
 typedef pcl::PointXYZRGBA PointT;
@@ -96,6 +97,11 @@ typedef struct histogram {
   float histo[NH*NS + NV];   /**< histogram array */
   int n;                     /**< length of histogram array */
 }histogram;
+
+int current_state = 0;
+// 0: STOP
+// 1: RUN
+// 2: RESUME
 
 int print_help()
 {
@@ -285,8 +291,7 @@ struct callback_args{
   pcl::visualization::PCLVisualizer::Ptr viewerPtr;
 };
   
-void
-pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
+void pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
 {
   struct callback_args* data = (struct callback_args *)args;	
   if (event.getPointIndex () == -1)
@@ -302,8 +307,19 @@ pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
   std::cout << current_point.x << " " << current_point.y << " " << current_point.z << std::endl;
 }
 
+void stateCallback(const frmsg::followme_state::ConstPtr& state)
+{
+  if (current_state == state->state)
+    return;
+  current_state = state->state;
+}
+
 int main (int argc, char** argv)
 {
+  ros::init(argc, argv, "DetectingPeople");
+  ros::NodeHandle nh;
+  ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
+  ros::Publisher people_pub = ng.advertise<frmsg::people>("followme_people", 100);
   if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
         return print_help();
 
@@ -327,7 +343,6 @@ int main (int argc, char** argv)
   pcl::console::parse_argument (argc, argv, "--conf", min_confidence);
   pcl::console::parse_argument (argc, argv, "--min_h", min_height);
   pcl::console::parse_argument (argc, argv, "--max_h", max_height);
-
 
   // Read Kinect live stream:
   PointCloudT::Ptr cloud (new PointCloudT);
@@ -407,6 +422,7 @@ int main (int argc, char** argv)
   {
     if (new_cloud_available_flag && cloud_mutex.try_lock ())    // if a new cloud is available
     {
+      if (current_state != 0) continue;
       new_cloud_available_flag = false;
 
       // Perform people detection on the new cloud:
