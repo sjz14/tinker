@@ -1,7 +1,7 @@
 // Project      : arm_recognize
 // File         : main2.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-11, 14:32:19
+// Last modified: 2014-07-11, 18:17:27
 
 #include <stdlib.h>
 #include <iostream>
@@ -53,11 +53,8 @@ void handRec(Mat I)
     threshold(CC[0], mask1, th, max_BINARY_value, THRESH_BINARY_INV);
     bitwise_and(mask, mask1, mask);
 
-    namedWindow("1",1);
-
     Mat bw;
     dilate(mask, bw, Mat());    // 膨胀
-    imshow("1", bw);
 
     vector<vector<Point> > contours;
     findContours(bw, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -68,11 +65,6 @@ void handRec(Mat I)
         circle(img,Point((int)(mom.m10/mom.m00),(int)(mom.m01/mom.m00)),2,Scalar(1),2); 
         // 找到的点
     }
- 
-     namedWindow("2",1);
-     imshow("2",img);  
-
-
 }
 
 int main(int argc, char** argv)
@@ -113,8 +105,6 @@ int main(int argc, char** argv)
     while (ros::ok())
     {
         ic_->curr_image.copyTo(img);
-        cvNamedWindow("0");
-        imshow("0",img);
         handRec(img);
         ros::spinOnce();
         cv::waitKey(3);
