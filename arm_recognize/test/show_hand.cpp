@@ -1,7 +1,7 @@
 // Project      : arm_recognize
-// File         : main2.cpp
+// File         : show_hand.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-11, 14:11:15
+// Last modified: 2014-07-11, 14:32:13
 
 #include <stdlib.h>
 #include <iostream>
@@ -113,8 +113,9 @@ int main(int argc, char** argv)
         cvNamedWindow("0");
         imshow("0",img);
         handRec(img);
+        ros::spinOnce();
+        cvWaitKey(3);
 
-        cvWaitKey(0);
         while (!ic_->ready && ros::ok())
         {
             ros::spinOnce();

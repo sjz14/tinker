@@ -1,7 +1,7 @@
 // Project      : arm_recognize
 // File         : main2.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-11, 14:11:06
+// Last modified: 2014-07-11, 14:32:19
 
 #include <stdlib.h>
 #include <iostream>
@@ -116,14 +116,17 @@ int main(int argc, char** argv)
         cvNamedWindow("0");
         imshow("0",img);
         handRec(img);
+        ros::spinOnce();
+        cv::waitKey(3);
 
-        cvWaitKey(0);
         while (!ic_->ready && ros::ok())
         {
             ros::spinOnce();
         }
         rate.sleep();
     }
+
+    printf("bye.\n");
     delete ic_;
     ic_ = NULL;
 }
