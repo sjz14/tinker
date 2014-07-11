@@ -1,12 +1,11 @@
 // Project      : arm_recognize
 // File         : recognize_img.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-11, 11:55:47
+// Last modified: 2014-07-11, 13:16:50
 
 #include <stdlib.h>
 #include <iostream>
 #include <string>
-#include <ros/ros.h>
 
 //#include <XnCppWrapper.h>
 #include "opencv/cv.h"

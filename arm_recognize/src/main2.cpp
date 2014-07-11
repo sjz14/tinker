@@ -1,7 +1,7 @@
 // Project      : arm_recognize
 // File         : main2.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-11, 12:22:06
+// Last modified: 2014-07-11, 13:15:59
 
 #include <stdlib.h>
 #include <iostream>
@@ -25,18 +25,18 @@ void handRec(Mat I)
     split(img, CC);
 
     Mat mask, mask1;
-    int th = 230;
+    int th = 230;   // R
     int max_BINARY_value = 255;
     threshold(CC[2], mask, th, max_BINARY_value, THRESH_BINARY);
     
-    th = 130;
+    th = 130;       // G(上下限)
     threshold(CC[1], mask1, th, max_BINARY_value, THRESH_BINARY);
     bitwise_and(mask, mask1, mask);
     th = 200;
     threshold(CC[1], mask1, th, max_BINARY_value, THRESH_BINARY_INV);
     bitwise_and(mask, mask1, mask);
     
-    th = 130;
+    th = 130;       // B
     threshold(CC[0], mask1, th, max_BINARY_value, THRESH_BINARY);
     bitwise_and(mask, mask1, mask);
     th = 200;
@@ -46,7 +46,7 @@ void handRec(Mat I)
     namedWindow("1",1);
 
     Mat bw;
-    dilate(mask, bw, Mat());
+    dilate(mask, bw, Mat());    // 膨胀
     imshow("1", bw);
 
     vector<vector<Point> > contours;
@@ -56,6 +56,7 @@ void handRec(Mat I)
     {
         Moments mom = moments(Mat(contours[i]),TRUE);
         circle(img,Point((int)(mom.m10/mom.m00),(int)(mom.m01/mom.m00)),2,Scalar(1),2); 
+        // 找到的点
     }
  
      namedWindow("2",1);
@@ -64,9 +65,12 @@ void handRec(Mat I)
 
 }
 
-int main()
+int main(int argc, char** argv)
 {
+    ros::init(argc, argv, "arm_recognize_node");
+    ros::NodeHandle n();
     ros::Rate rate(3);
+
     ic_ = new ImageConverter();
 
     // Init
