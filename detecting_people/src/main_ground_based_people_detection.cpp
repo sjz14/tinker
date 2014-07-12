@@ -59,12 +59,9 @@
 #include <math.h>
 #include <ros/ros.h>
 #include <ros/package.h>
-<<<<<<< HEAD
 #include <reading_pointcloud/reading_pointcloud.h>
-=======
 #include "frmsg/people.h"
 #include "frmsg/followme_state.h"
->>>>>>> 2a07b94b99d153b242cf74f385bed008e6483cbf
 //#include <opencv2/opencv.hpp>
 
 typedef pcl::PointXYZRGB PointT;
@@ -321,12 +318,17 @@ void stateCallback(const frmsg::followme_state::ConstPtr& state)
 
 int main (int argc, char** argv)
 {
-<<<<<<< HEAD
-
   //ROS Initialization
   ros::init(argc, argv, "detecting_people");
-  ros::NodeHandle n;
+  ros::NodeHandle nh;
   ros::Rate rate(13);
+
+  ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
+  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 100);
+  if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
+  {
+    return print_help();
+  }
 
   //PCL pointcloud Initialization
   CloudConverter* cc_ = new CloudConverter();
@@ -341,17 +343,6 @@ int main (int argc, char** argv)
       return -1;
     }
   }
-
-  //if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
-        //return print_help();
-=======
-  ros::init(argc, argv, "DetectingPeople");
-  ros::NodeHandle nh;
-  ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
-  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 100);
-  if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
-        return print_help();
->>>>>>> 2a07b94b99d153b242cf74f385bed008e6483cbf
 
   // Input parameter from the .yaml
   std::string package_path_ = ros::package::getPath("detecting_people") + "/";
@@ -459,14 +450,9 @@ int main (int argc, char** argv)
   {
     if (cc_->ready_xyzrgb_ /*cloud_mutex.try_lock ()*/)    // if a new cloud is available
     {
-<<<<<<< HEAD
       cloud = cc_->msg_xyzrgb_;
       PointCloudT::Ptr cloud_new(new PointCloudT(*cloud));
-      cc_->ready_xyzrgb_ = false;d
-=======
-      if (current_state != 0) continue;
-      new_cloud_available_flag = false;
->>>>>>> 2a07b94b99d153b242cf74f385bed008e6483cbf
+      cc_->ready_xyzrgb_ = false;
 
       // Perform people detection on the new cloud:
       std::vector<pcl::people::PersonCluster<PointT> > clusters;   // vector containing persons clusters
