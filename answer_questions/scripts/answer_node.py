@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-05-09, 17:09:31
+#  Last modified: 2014-05-10, 22:17:20
 # Description   : Answer question listed in resource/
 #
 
@@ -28,8 +28,15 @@ def getQuestionCallback(data):
     if ques.upper() == "WHO ARE YOU":
         os.system("espeak -s 130 -vzh --stdout '我的名字叫 Tinker' | aplay")
         sys.exit(0)
-    ans_speak = ans.replace("'", '')
-    os.system("espeak -s 130 --stdout '" + ans_speak + "' | aplay")
+    playSound(ans)
+
+def playSound(answer):
+    mp3dir = rospkg.RosPack().get_path('answer_questions') + '/resource/sounds/'
+    if os.path.exists(mp3dir + answer + '.mp3'):
+        os.system('mplayer "' + mp3dir + answer + '.mp3"')
+    else:
+        ans_speak = answer.replace("'", '')
+        os.system("espeak -s 130 --stdout '" + ans_speak + "' | aplay")
 
 def main(argv):
     rcdir = rospkg.RosPack().get_path('answer_questions') + '/resource/'
