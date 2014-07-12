@@ -1,7 +1,7 @@
 // Project:         decide
 // File:            decide.h
 // Created by gjq at 2014-01-15
-// Last modified: 2014-03-11, 16:42:52
+// Last modified: 2014-07-11, 09:44:44
 // Description: follow me decision node.
 
 #ifndef _DECIDE_H_
@@ -9,7 +9,6 @@
 
 #include "ros/ros.h"
 #include <opencv2/opencv.hpp>
-#include "reading_image.h"
 #include "frmsg/box.h"
 #include "frmsg/dec.h"
 

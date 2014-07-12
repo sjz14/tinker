@@ -1,9 +1,9 @@
-// Last edited by bss at 2013-12-21
+// Last modified: 2014-07-11, 10:37:49
 
 #include <opencv2/opencv.hpp>
-#include <tld_utils.h>
-#include <LKTracker.h>
-#include <FerNNClassifier.h>
+#include <OpenTLD/tld_utils.h>
+#include <OpenTLD/LKTracker.h>
+#include <OpenTLD/FerNNClassifier.h>
 #include <fstream>
 #include <opencv2/legacy/legacy.hpp>
 
