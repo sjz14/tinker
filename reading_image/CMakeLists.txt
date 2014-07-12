@@ -82,8 +82,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES reading_image
-#  CATKIN_DEPENDS cv_bridge image_transport roscpp std_msgs
+  LIBRARIES reading_image
+  CATKIN_DEPENDS cv_bridge image_transport roscpp std_msgs
 #  DEPENDS system_lib
 )
 
