@@ -106,9 +106,10 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(tinker_odom_node src/main.cpp)
-add_executable(test_fake_move test/fake_move.cpp)
 
+add_executable(tinker_odom_node src/main.cpp)
+add_executable(tinker_odom_node2 src/main2.cpp)
+add_executable(tinker_dead_reckon_node src/dr.cpp)
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(tinker_odom_node tinker_odom_generate_messages_cpp)
@@ -117,10 +118,13 @@ add_executable(test_fake_move test/fake_move.cpp)
 target_link_libraries(tinker_odom_node
    ${catkin_LIBRARIES}
  )
-target_link_libraries(test_fake_move
+
+target_link_libraries(tinker_odom_node2
    ${catkin_LIBRARIES}
  )
-
+target_link_libraries(tinker_dead_reckon_node
+   ${catkin_LIBRARIES}
+ )
 #############
 ## Install ##
 #############
