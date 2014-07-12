@@ -2,7 +2,7 @@
 // File         : show_xyz.cpp
 // Author       : bss
 // Creation Date: 2014-07-12
-// Last modified: 2014-07-12, 04:39:47
+// Last modified: 2014-07-12, 13:03:09
 // Description  : show ros-style pointcloud.
 // 
 
@@ -41,9 +41,10 @@ int main(int argc, char** argv)
         viewer.removeAllPointClouds();
         viewer.removeAllShapes();
         pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr msg = cc_->msg_xyzrgb_;
-        printf ("%s, Cloud: width = %d, height = %d\n", msg->header.frame_id.c_str(), msg->width, msg->height);
-        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(msg);
-        viewer.addPointCloud<pcl::PointXYZRGB>(msg, rgb, "input_cloud");
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>(*msg));
+        printf ("%s, Cloud: width = %d, height = %d\n", cloud->header.frame_id.c_str(), cloud->width, cloud->height);
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
+        viewer.addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "input_cloud");
 
         rate.sleep();
     }
