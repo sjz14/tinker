@@ -1,5 +1,5 @@
 # Created by bss at 2013-12-21
-# Last modified: 2014-04-20, 01:48:03
+# Last modified: 2014-07-11, 10:42:38
 
 cmake_minimum_required(VERSION 2.8.3)
 project(followme2)
@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   followme
+  reading_image
 )
 find_package(OpenCV)
 
@@ -88,9 +89,8 @@ find_package(OpenCV)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES followme2
-  LIBRARIES followme
+#  INCLUDE_DIRS include
+#  LIBRARIES followme2
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
@@ -106,9 +106,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   src
   include
-  ../followme/include/followme
-  ../followme/include/OpenTLD
-  ../followme/include/reading_image
+  ${followme_INCLUDE_DIRS}
+  ${reading_image_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
 
@@ -121,7 +120,6 @@ add_library(followmedn2 src/followme/followme.cpp)
 ## Declare a cpp executable
 # add_executable(followme_node src/followme_node.cpp)
 add_executable(followme_decision2 src/followme/main.cpp)
-add_executable(test_reading_image2 test/test_reading_image.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -143,11 +141,6 @@ target_link_libraries(followme_decision2
     LKTracker
     ferNN
     tld_utils
-    ${catkin_LIBRARIES}
-)
-
-target_link_libraries(test_reading_image2
-    reading_image
     ${catkin_LIBRARIES}
 )
 

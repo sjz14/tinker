@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   genmsg
+  reading_image
 )
 find_package(OpenCV)
 ## System dependencies are found with CMake's conventions
@@ -105,18 +106,15 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   include
   src
-  ../followme/include/OpenTLD
-  ../followme/include/followme
-  ../followme/include/reading_image
-  ../followme/include
   ${OpenCV_INFLUDE_DIRS}
+  ${reading_images_INCLUDE_DIRS}
  # ${catkin_INCLUDE_DIRS}
 )
 ## Declare a cpp library
 # add_library(decision src/decide.cpp)
 
 
-add_executable(decision_node src/main.cpp;src/decide.cpp;../followme/src/reading_image/reading_image.cpp)
+add_executable(decision_node src/main.cpp;src/decide.cpp)
 #target_link_libraries(decision_node
 #    ${OpenCV_LIBRARIES}
 #)
@@ -127,6 +125,7 @@ add_executable(decision_node src/main.cpp;src/decide.cpp;../followme/src/reading
 #    ${catkin_LIBRARIES}
 #)
 target_link_libraries(decision_node
+    reading_image
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
 )

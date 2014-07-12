@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC    -shared -Wl,-soname,libtld.so -o devel/lib/libtld.so CMakeFiles/tld.dir/src/OpenTLD/TLD.cpp.o 

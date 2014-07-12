@@ -1,16 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(tinker_odom)
+project(reading_image)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  nav_msgs
+  cv_bridge
+  image_transport
   roscpp
-  serial
   std_msgs
-  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -70,7 +68,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs#   nav_msgs#   std_msgs
+#   std_msgs
 # )
 
 ###################################
@@ -83,9 +81,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tinker_odom
-#  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp serial std_msgs tf
+  INCLUDE_DIRS include
+#  LIBRARIES reading_image
+#  CATKIN_DEPENDS cv_bridge image_transport roscpp std_msgs
 #  DEPENDS system_lib
 )
 
@@ -97,29 +95,33 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS}
+  include
 )
 
 ## Declare a cpp library
-# add_library(tinker_odom
-#   src/${PROJECT_NAME}/tinker_odom.cpp
+# add_library(reading_image
+#   src/${PROJECT_NAME}/reading_image.cpp
 # )
+add_library(reading_image
+  src/reading_image.cpp
+)
 
 ## Declare a cpp executable
-add_executable(tinker_odom_node src/main.cpp)
-add_executable(test_fake_move test/fake_move.cpp)
+# add_executable(reading_image_node src/reading_image_node.cpp)
+add_executable(test_reading_image test/test_reading_image.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(tinker_odom_node tinker_odom_generate_messages_cpp)
+# add_dependencies(reading_image_node reading_image_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(tinker_odom_node
-   ${catkin_LIBRARIES}
- )
-target_link_libraries(test_fake_move
-   ${catkin_LIBRARIES}
- )
+# target_link_libraries(reading_image_node
+#   ${catkin_LIBRARIES}
+# )
+target_link_libraries(test_reading_image
+    reading_image
+    ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -136,7 +138,7 @@ target_link_libraries(test_fake_move
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS tinker_odom tinker_odom_node
+# install(TARGETS reading_image reading_image_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -161,7 +163,7 @@ target_link_libraries(test_fake_move
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_tinker_odom.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_reading_image.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
