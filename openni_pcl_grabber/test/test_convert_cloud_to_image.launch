@@ -1,0 +1,15 @@
+<!-- Project      : openni_pcl_grabber -->
+<!-- File         : test_convert_cloud_to_image.launch -->
+<!-- created by bss at 2014-07-12 -->
+<!-- Last modified: 2014-07-12, 02:40:09
+    !-->
+
+
+<launch>
+
+  <node pkg="pcl_ros" name="pcl2img" type="convert_pointcloud_to_image" output="screen">
+    <remap from="input" to="/openni/points2" />
+    <remap from="output" to="/openni/points2_image" />
+  </node>
+
+</launch>

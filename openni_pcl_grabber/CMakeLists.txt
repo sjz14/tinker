@@ -1,19 +1,20 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(detecting_people)
+project(openni_pcl_grabber)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-  pcl_ros
+  cv_bridge
+  image_transport
   pcl_conversions
-  reading_pointcloud
+  pcl_ros
+  roscpp
+  std_msgs
 )
 find_package(OpenCV)
 find_package(PCL 1.7 REQUIRED)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -85,8 +86,8 @@ find_package(PCL 1.7 REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES detecting_people
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  LIBRARIES openni_pcl_grabber
+#  CATKIN_DEPENDS cv_bridge image_transport pcl_conversions pcl_ros roscpp std_msgs
 #  DEPENDS system_lib
 )
 
@@ -101,30 +102,46 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
-  ${reading_pointcloud_INCLUDE_DIRS}
 )
 link_directories(
   ${PCL_LIBRARY_DIRS}
 )
 add_definitions(${PCL_DEFINITIONS})
-add_executable(detecting_people src/main_ground_based_people_detection.cpp)
-target_link_libraries(detecting_people ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
 ## Declare a cpp library
-# add_library(detecting_people
-#   src/${PROJECT_NAME}/detecting_people.cpp
+# add_library(openni_pcl_grabber
+#   src/${PROJECT_NAME}/openni_pcl_grabber.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(detecting_people_node src/detecting_people_node.cpp)
+# add_executable(openni_pcl_grabber_node src/openni_pcl_grabber_node.cpp)
+add_executable(openni_pcl_grabber_node src/main.cpp)
+add_executable(test_show_pts test/show_pts.cpp)
+add_executable(test_send_cloud test/send_cloud.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(detecting_people_node detecting_people_generate_messages_cpp)
+# add_dependencies(openni_pcl_grabber_node openni_pcl_grabber_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(detecting_people_node
+# target_link_libraries(openni_pcl_grabber_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(openni_pcl_grabber_node
+  ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+target_link_libraries(test_show_pts
+  ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+target_link_libraries(test_send_cloud
+  ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -141,7 +158,7 @@ target_link_libraries(detecting_people ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${Op
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS detecting_people detecting_people_node
+# install(TARGETS openni_pcl_grabber openni_pcl_grabber_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -166,7 +183,7 @@ target_link_libraries(detecting_people ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${Op
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_detecting_people.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_openni_pcl_grabber.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
