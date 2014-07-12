@@ -13,7 +13,7 @@ void parserCallback(const geometry_msgs::Twist::ConstPtr& msg)
     std::stringstream ss;
     float x = msg->linear.x*1000;
     float y = msg->linear.y*1000;
-    float th = msg->angular.z/PI*180;
+    float th = -msg->angular.z/PI*180;
     float dis = sqrt(x*x+y*y);
     float angle = atan2(y,x);
     if (angle<0) angle+=2*PI;
