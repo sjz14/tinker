@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(reading_image)
+project(sift)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cv_bridge
-  image_transport
+  reading_image
   roscpp
+  rospy
   std_msgs
 )
-
+find_package(OpenCV)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -82,8 +82,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES reading_image
-  CATKIN_DEPENDS cv_bridge image_transport roscpp std_msgs
+#  LIBRARIES sift
+#  CATKIN_DEPENDS reading_image roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -96,32 +96,31 @@ catkin_package(
 # include_directories(include)
 include_directories(
   include
+  ${reading_image_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
-
+add_executable(sift src/main.cpp)
+target_link_libraries(sift
+  ${OpenCV_LIBS}
+  ${catkin_LIBRARIES}
+  ${reading_image_LIBRARIES}
+)
 ## Declare a cpp library
-# add_library(reading_image
-#   src/${PROJECT_NAME}/reading_image.cpp
+# add_library(sift
+#   src/${PROJECT_NAME}/sift.cpp
 # )
-add_library(reading_image
-  src/reading_image.cpp
-)
 
 ## Declare a cpp executable
-# add_executable(reading_image_node src/reading_image_node.cpp)
-add_executable(test_reading_image test/test_reading_image.cpp)
+# add_executable(sift_node src/sift_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(reading_image_node reading_image_generate_messages_cpp)
+# add_dependencies(sift_node sift_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(reading_image_node
+# target_link_libraries(sift_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(test_reading_image
-    reading_image
-    ${catkin_LIBRARIES}
-)
 
 #############
 ## Install ##
@@ -138,7 +137,7 @@ target_link_libraries(test_reading_image
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS reading_image reading_image_node
+# install(TARGETS sift sift_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -163,7 +162,7 @@ target_link_libraries(test_reading_image
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_reading_image.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_sift.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
