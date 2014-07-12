@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   pcl_ros
   pcl_conversions
+  reading_pointcloud
   frmsg
 )
 find_package(OpenCV)
@@ -101,6 +102,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${reading_pointcloud_INCLUDE_DIRS}
 )
 link_directories(
   ${PCL_LIBRARY_DIRS}
