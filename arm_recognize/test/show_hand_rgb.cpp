@@ -1,7 +1,7 @@
 // Project      : arm_recognize
-// File         : show_hand.cpp
+// File         : show_hand_rgb.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-11, 18:16:59
+// Last modified: 2014-07-12, 21:40:28
 
 #include <stdlib.h>
 #include <iostream>
