@@ -2,7 +2,7 @@
 // File:        main.cpp
 // Created by bss at 2014-01-09
 // Last modified: 2014-03-11, 14:46:18
-// Description: 
+// Description:
 ///edited by xf 2014-1-18
 //
 
@@ -53,12 +53,12 @@ int main(int argc, char** argv)
 
     QString password = settings.value("sudopass",1).toString();
     QString chipset = settings.value("chipset",1).toString();
-    printf("selected chipset is %s\n",chipset.toStdString().c_str()); 
+    printf("selected chipset is %s\n",chipset.toStdString().c_str());
     char command[1024] = "dmesg | grep ";
     strcat(command, chipset.toStdString().c_str());
     char buffer[100] = {0};
     FILE* fp = popen(command, "r");
-    char devnum[10] = "NULL";    
+    char devnum[10] = "NULL";
     while (fgets(buffer,sizeof(buffer),fp)!=NULL)
     {
 	int pos;
@@ -69,8 +69,8 @@ int main(int argc, char** argv)
     printf("%s\n",devnum);
     char sudocommand[100] = "echo ";
     std::stringstream ss;
-    
-    if (strcmp(devnum,"NULL") != 0)    
+
+    if (strcmp(devnum,"NULL") != 0)
     {
 	strcat(sudocommand, password.toStdString().c_str());
 	strcat(sudocommand, " | sudo -S chmod 777 /dev/");
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 	system(sudocommand);
 	char devnum2[20] = "/dev/";
 	strcat(devnum2,devnum);
-	my_serial_stream.Open( devnum2 ) ; 
+	my_serial_stream.Open( devnum2 ) ;
     	ss<<devnum2;
     }
     else
@@ -89,29 +89,29 @@ int main(int argc, char** argv)
 	strcat(sudocommand, dev.toStdString().c_str());
 	//printf("%s\n",sudocommand);
 	system(sudocommand);
-	my_serial_stream.Open( dev.toStdString().c_str() ) ; 
+	my_serial_stream.Open( dev.toStdString().c_str() ) ;
     	ss<<dev.toStdString().c_str();
-	
+
 	}
 	//cout<<"serialport:"<<ss.str()<<endl;
 	//my_serial_port = new SerialPort(ss.str());
-   	//std::cout<<my_serial_port->IsOpen()<<std::endl; 
+   	//std::cout<<my_serial_port->IsOpen()<<std::endl;
         //my_serial_port->Open();
 
-   	//std::cout<<my_serial_port->IsOpen()<<std::endl; 
+   	//std::cout<<my_serial_port->IsOpen()<<std::endl;
  	//my_serial_port->SetBaudRate(SerialPort::BAUD_9600);
 
     if (!my_serial_stream){
         std::cout<<"cannot open serial"<<std::endl;
         return -1;
     }
-   
-   my_serial_stream.SetBaudRate( SerialStreamBuf::BAUD_9600) ;
+
+   my_serial_stream.SetBaudRate( SerialStreamBuf::BAUD_57600) ;
    std_msgs::String msg2;
     ros::Rate loop_rate(100);
     ros::Subscriber sub = n.subscribe("order",1000,orderCallback);
     ros::Publisher pub = n.advertise<std_msgs::UInt8MultiArray>("opticflow",100);
-    
+
    std_msgs::UInt8MultiArray m;
 
     while(ros::ok())
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
 	//char buffer_opt[8];
 	//my_serial_stream.read(buffer_opt,8);
 	vector<unsigned char> buffer_opt;
-	loop_rate.sleep();	
+	loop_rate.sleep();
 	while (my_serial_stream.rdbuf()->in_avail()>0)
 	{
 	    	char next_byte;
@@ -143,15 +143,15 @@ int main(int argc, char** argv)
 			    //msg2.data = string(buff);
 			    //pub.publish(msg2);
 			    pub.publish(m);
-			} 
+			}
 		   }
 	}
 	rate.sleep();
 	//msg2.data = ss.str();
 	//ROS_INFO("%s",buffer_opt);
 	//pub.publish(msg2);
-	ros::spinOnce();	  
-    }    
+	ros::spinOnce();
+    }
 
     //my_serial_port->Close();
     my_serial_stream.Close();

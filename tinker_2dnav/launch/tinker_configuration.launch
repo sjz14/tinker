@@ -1,0 +1,20 @@
+<launch>
+    <arg name="gui" default="False" />
+    <param name="robot_description" textfile="$(find tinker_2dnav)/tinker.urdf" /> 
+    <param name="use_gui" value="$(arg gui)"/>
+    
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+    <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node" >
+    </node>
+    
+    <node pkg="serial" type="serial_node" name="serial_node">
+    </node>
+
+    <node pkg="parser" type="parser" name="parser">
+    </node>
+
+    <node pkg="tinker_odom" type="tinker_odom_node" name="tinker_odom_node">
+    </node>
+</launch>

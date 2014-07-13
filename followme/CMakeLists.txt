@@ -1,5 +1,5 @@
 # Created by bss at 2013-12-21
-# Last modified: 2014-07-11, 10:31:00
+# Last modified: 2014-07-13, 12:09:00
 
 cmake_minimum_required(VERSION 2.8.3)
 project(followme)
@@ -9,11 +9,8 @@ project(followme)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
   sensor_msgs
-  cv_bridge
-  image_transport
   reading_image
 )
 find_package(OpenCV)
@@ -89,8 +86,8 @@ find_package(OpenCV)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES followme
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+  LIBRARIES tld_utils LKTracker ferNN tld fm_utils
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -103,7 +100,6 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  src
   include
   ${reading_image_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}

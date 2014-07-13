@@ -110,7 +110,8 @@ include_directories(
 # add_executable(arm_recognize_node src/arm_recognize_node.cpp)
 add_executable(arm_recognize_node src/main2.cpp)
 add_executable(test_recognize_static_img test/recognize_img.cpp)
-add_executable(test_show_hand test/show_hand.cpp)
+add_executable(test_show_hand_rgb test/show_hand_rgb.cpp)
+add_executable(test_show_hand_hsv test/show_hand_hsv.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -129,7 +130,12 @@ target_link_libraries(test_recognize_static_img
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(test_show_hand
+target_link_libraries(test_show_hand_rgb
+  reading_image
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(test_show_hand_hsv
   reading_image
   ${catkin_LIBRARIES}
 )
