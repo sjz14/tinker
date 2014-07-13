@@ -1,5 +1,5 @@
 # Created by bss at 2013-12-21
-# Last modified: 2014-07-11, 10:42:38
+# Last modified: 2014-07-13, 12:09:11
 
 cmake_minimum_required(VERSION 2.8.3)
 project(followme2)
@@ -9,11 +9,8 @@ project(followme2)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
   sensor_msgs
-  cv_bridge
-  image_transport
   followme
   reading_image
 )
@@ -104,7 +101,6 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  src
   include
   ${followme_INCLUDE_DIRS}
   ${reading_image_INCLUDE_DIRS}
