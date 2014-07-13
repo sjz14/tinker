@@ -1,6 +1,6 @@
 %YAML:1.0
 % Create by bss at 2014-07-11
-% Last modified: 2014-07-12, 22:14:39
+% Last modified: 2014-07-13, 12:27:49
 Parameters:
    th_r_low: 230
    th_r_high: 255  
@@ -12,6 +12,7 @@ Parameters:
    show_origin: 0
    show_area: 1
    show_final: 1
+   show_hsv: 1
 
    th_h_low: 15
    th_h_high: 30  

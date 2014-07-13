@@ -1,7 +1,7 @@
 // Project      : arm_recognize
 // File         : show_hand_hsv.cpp
 // created at 2014-07-10
-// Last modified: 2014-07-12, 22:16:32
+// Last modified: 2014-07-13, 12:55:37
 
 #include <stdlib.h>
 #include <iostream>
@@ -20,6 +20,7 @@ using namespace cv;
 ImageConverter* ic_ = NULL;
 int h_low, h_high;
 bool show_0, show_1, show_2;
+bool show_hsv;
 
 void handRec(Mat I)
 {
@@ -28,6 +29,12 @@ void handRec(Mat I)
     cvtColor(img, img_hsv, CV_RGB2HSV);
     vector<Mat> CC;
     split(img_hsv, CC);
+
+    if (show_hsv)
+    {
+        namedWindow("hsv(h)", 1);
+        imshow("hsv(h)", CC[0]);
+    }
 
     Mat mask, mask1;
     int max_BINARY_value = 255;
@@ -74,6 +81,7 @@ int main(int argc, char** argv)
     show_0 = (bool)(int)fs_->getFirstTopLevelNode()["show_origin"];
     show_1 = (bool)(int)fs_->getFirstTopLevelNode()["show_area"];
     show_2 = (bool)(int)fs_->getFirstTopLevelNode()["show_final"];
+    show_hsv = (bool)(int)fs_->getFirstTopLevelNode()["show_hsv"];
 
     delete fs_;
     fs_ = NULL;
