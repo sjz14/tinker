@@ -325,6 +325,8 @@ int main (int argc, char** argv)
 
   ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
   ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 100);
+  frmsg::people people_pub_;
+
   if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
   {
     return print_help();
@@ -443,13 +445,16 @@ int main (int argc, char** argv)
   histogram* first_hist;
 
   int max_people_num = (int)fs_->getFirstTopLevelNode()["max_people_num"];
-  float* histo_dist = new float[max_people_num];
+  //float* histo_dist = new float[max_people_num];
+  float min_dist = 2.0;
+  std::vector<pcl::people::PersonCluster<PointT> >::iterator it_;
 
   // Main loop:
   while (!viewer.wasStopped() )
   {
     if (cc_->ready_xyzrgb_ /*cloud_mutex.try_lock ()*/)    // if a new cloud is available
     {
+      min_dist = 2.0;
       cloud = cc_->msg_xyzrgb_;
       PointCloudT::Ptr cloud_new(new PointCloudT(*cloud));
       cc_->ready_xyzrgb_ = false;
@@ -471,8 +476,6 @@ int main (int argc, char** argv)
       std::vector<pcl::people::PersonCluster<PointT> >::iterator it;
       for(it = clusters.begin(); it != clusters.end(); ++it)
       {
-        for ( int i = 0; i < max_people_num; i++ )
-          histo_dist[i] = 2.0;
         if(it->getPersonConfidence() > min_confidence)             // draw only people with confidence above a threshold
         {
           // draw theoretical person bounding box in the PCL viewer:
@@ -498,7 +501,12 @@ int main (int argc, char** argv)
       	    histogram* hist_tmp = calc_histogram( cloud_people );
             float tmp = histo_dist_sq( first_hist, hist_tmp );
       	    std::cout << "The histogram distance is " << tmp << std::endl;
-            histo_dist[k] = tmp;
+            if ( tmp < min_dist )
+            {
+              min_dist = tmp;
+              it_ = it;
+            }
+            //histo_dist[k] = tmp;
       	    //free(hist_tmp);
       	  }
       	  else
@@ -506,7 +514,12 @@ int main (int argc, char** argv)
       	    histogram* hist_tmp = calc_histogram( cloud_people );
             float tmp = histo_dist_sq( first_hist, hist_tmp );
             std::cout << "The histogram distance is " << tmp << std::endl;
-            histo_dist[k] = tmp;
+            if ( tmp < min_dist )
+            {
+              min_dist = tmp;
+              it_ = it;
+            }
+            //histo_dist[k] = tmp;
       	    //free(hist_tmp);
       	  }
           //it->drawTBoundingBox(viewer, k);
@@ -517,36 +530,11 @@ int main (int argc, char** argv)
       }
       if ( people_count > 11 )
       {
-        float min_hist_dis = histo_dist[0];
-        int min_hist_num = -1;
-        for ( int i = 1; i < max_people_num; i++ )
+        if ( min_dist < (int)fs_->getFirstTopLevelNode()["min_hist_dis"] )
         {
-          if ( histo_dist[i] < 2 )
-            std::cout << "The storaged histogram distance " << i << " is " << histo_dist[i] << std::endl;
-          if ( histo_dist[i] < min_hist_dis )
-          {
-            min_hist_dis = histo_dist[i]; 
-            min_hist_num = i;
-          }
+          it_->drawTBoundingBox(viewer, 1);
+          std::cout << "vector" << it->getTCenter() << std::endl;  
         }
-        int i = 0;
-        for( it = clusters.begin(); it != clusters.end(); ++it)
-        {
-          if ( min_hist_dis < (float)fs_->getFirstTopLevelNode()["min_hist_dis"] )
-          {
-            if ( it->getPersonConfidence() > min_confidence )
-            {
-              if ( i < min_hist_num )
-              {
-                i++;
-              }
-              else
-                break;
-            }       
-          }
-        } 
-        it->drawTBoundingBox(viewer, 1);
-        std::cout << "vector" << it->getTCenter() << std::endl;  
       }
       std::cout << k << " people found" << std::endl;
       viewer.spinOnce();
