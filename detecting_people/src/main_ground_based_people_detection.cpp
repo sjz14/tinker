@@ -62,6 +62,7 @@
 #include "frmsg/people.h"
 #include "frmsg/followme_state.h"
 #include <reading_pointcloud/reading_pointcloud.h>
+#include <ros/time.h>
 //#include <opencv2/opencv.hpp>
 
 typedef pcl::PointXYZRGB PointT;
@@ -433,6 +434,11 @@ int main (int argc, char** argv)
   {
     if ( cc_->ready_xyzrgb_ )    // if a new cloud is available
     {
+
+      std::vector<float> x;
+      std::vector<float> y;
+      std::vector<float> depth;
+
       cloud = cc_->msg_xyzrgb_;
       PointCloudT::Ptr cloud_new(new PointCloudT(*cloud));
       cc_->ready_xyzrgb_ = false;
@@ -454,14 +460,21 @@ int main (int argc, char** argv)
       std::vector<pcl::people::PersonCluster<PointT> >::iterator it;
       std::vector<pcl::people::PersonCluster<PointT> >::iterator it_min;
 
+      float min_z = 10.0;
+
       float histo_dist_min = 2.0;
+      int id = -1;
 
       for(it = clusters.begin(); it != clusters.end(); ++it)
       {
         if(it->getPersonConfidence() > min_confidence)             // draw only people with confidence above a threshold
         {
+
+          x.push_back((it->getTCenter())[0]);
+          y.push_back((it->getTCenter())[1]);
+          depth.push_back(it->getDistance());
           // draw theoretical person bounding box in the PCL viewer:
-          pcl::copyPointCloud( *cloud, it->getIndices(), *cloud_people);
+          /*pcl::copyPointCloud( *cloud, it->getIndices(), *cloud_people);
           if ( people_count == 0 )
           {
             first_hist = calc_histogram_a( cloud_people );
@@ -474,6 +487,15 @@ int main (int argc, char** argv)
             add_hist( first_hist, hist_tmp );
             it->drawTBoundingBox(viewer, k);
             people_count++;
+          }*/
+          pcl::copyPointCloud( *cloud, it->getIndices(), *cloud_people);
+          if ( people_count < 11 )
+          {
+            if ( it->getDistance() < min_z )
+            {
+              it_min = it;
+              min_z = it->getDistance();
+            }
           }
           else if ( people_count == 11 )
           {
@@ -484,6 +506,7 @@ int main (int argc, char** argv)
             std::cout << "The histogram distance is " << tmp << std::endl;
             histo_dist_min = tmp;
             it_min = it;
+            id = k;
           }
           else
           {
@@ -494,34 +517,59 @@ int main (int argc, char** argv)
             {
               histo_dist_min = tmp;
               it_min = it;
+              id = k;
             }
           }
           k++;
-          std::cout << "The data of the center is " << cloud->points [(cloud->width >> 1) * (cloud->height + 1)].x << "  " << cloud->points [(cloud->width >> 1) * (cloud->height + 1)].y << " " << cloud->points [(cloud->width >> 1) * (cloud->height + 1)].z << std::endl;
-          std::cout << "The size of the people cloud is " <<  cloud_people->points.size() << std::endl;
+          //std::cout << "The data of the center is " << cloud->points [(cloud->width >> 1) * (cloud->height + 1)].x << "  " << cloud->points [(cloud->width >> 1) * (cloud->height + 1)].y << " " << cloud->points [(cloud->width >> 1) * (cloud->height + 1)].z << std::endl;
+          //std::cout << "The size of the people cloud is " <<  cloud_people->points.size() << std::endl;
           std::cout << "The " << k << " person's distance is " << it->getDistance() << std::endl;
         }
       }
-      if ( people_count > 11 )
+      pub_people_.x = x;
+      pub_people_.y = y;
+      pub_people_.depth = depth;
+      if ( k > 0 )
       {
-        if ( histo_dist_min < 1.0 )
+        if ( people_count <= 11 )
         {
-          pub_people_.depth = it_min->getDistance();
-          pub_people_.x = (it_min->getTCenter())[0];
-          pub_people_.y = (it_min->getTCenter())[1];
-          people_pub.publish(pub_people_);
-          it_min->drawTBoundingBox(viewer, 1);
-          std::cout << "The minimum distance of the histogram is " << histo_dist_min << std::endl;
-          std::cout << "The vector is " << it_min->getTCenter() << std::endl << "while the elements are " << (it_min->getTCenter())[0] << " " << (it_min->getTCenter())[1] << std::endl;
+          pcl::copyPointCloud( *cloud, it_min->getIndices(), *cloud_people);
+          if ( people_count == 0)
+          {
+            first_hist = calc_histogram_a( cloud_people );
+            people_count++;
+            it_min->drawTBoundingBox(viewer, 1);
+          }
+          else if ( people_count < 11 )
+          {
+            histogram* hist_tmp = calc_histogram_a( cloud_people );
+            add_hist( first_hist, hist_tmp );
+            it_min->drawTBoundingBox(viewer, 1);
+            people_count++;
+          }
         }
         else
         {
-          pub_people_.depth = -10;
-          pub_people_.x = -10;
-          pub_people_.y = -10;
-          people_pub.publish(pub_people_);
+          pub_people_.id = k-1;
+          if ( histo_dist_min < 1.3 )
+          {
+            it_min->drawTBoundingBox(viewer, 1);
+            std::cout << "The minimum distance of the histogram is " << histo_dist_min << std::endl;
+            std::cout << "The vector is " << it_min->getTCenter() << std::endl << "while the elements are " << (it_min->getTCenter())[0] << " " << (it_min->getTCenter())[1] << std::endl;
+          }
+          else
+          {
+            pub_people_.id = -1;
+          }
         }
       }
+      else
+      {
+        pub_people_.id = -1;
+      }
+      pub_people_.header.stamp = ros::Time::now();
+      people_pub.publish(pub_people_);
+      
       std::cout << k << " people found" << std::endl;
       viewer.spinOnce();
       ros::spinOnce();
