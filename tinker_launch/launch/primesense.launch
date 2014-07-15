@@ -1,0 +1,14 @@
+<!-- Project      : tinker_launch -->
+<!-- File         : primesense.launch -->
+<!-- created by bss at 2014-07-12 -->
+<!-- Last modified: 2014-07-12, 20:57:43
+    !-->
+
+<launch>
+
+  <node pkg="openni2_camera" type="openni2_camera_node" name="openni2_camera_node" output="screen" />
+
+  <include file="$(find openni_pcl_grabber)/convert_img_to_cloud.launch" />
+
+</launch>
+

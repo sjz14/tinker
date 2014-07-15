@@ -6,11 +6,9 @@ project(followme_select)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
-  cv_bridge
-  image_transport
   followme
+  reading_image
 )
 find_package(OpenCV)
 
@@ -99,11 +97,9 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  src
   include
-  ../followme/include/followme
-  ../followme/include/reading_image
-  ../followme/include/OpenTLD
+  ${followme_INCLUDE_DIRS}
+  ${reading_image_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
 

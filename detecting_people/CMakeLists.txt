@@ -6,10 +6,11 @@ project(detecting_people)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
   pcl_ros
   pcl_conversions
+  reading_pointcloud
+  frmsg
 )
 find_package(OpenCV)
 find_package(PCL 1.7 REQUIRED)
@@ -83,7 +84,7 @@ find_package(PCL 1.7 REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES detecting_people
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
@@ -95,11 +96,12 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${reading_pointcloud_INCLUDE_DIRS}
 )
 link_directories(
   ${PCL_LIBRARY_DIRS}

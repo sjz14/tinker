@@ -48,7 +48,7 @@
 #include <opencv2/opencv.hpp>  
 #include <pcl/console/parse.h>
 #include <pcl/point_types.h>
-#include <pcl/visualization/pcl_visualizer.h>    
+#include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/io/openni_grabber.h>
 #include <pcl/sample_consensus/sac_model_plane.h>
 #include <pcl/people/ground_based_people_detection_app.h>
@@ -59,9 +59,12 @@
 #include <math.h>
 #include <ros/ros.h>
 #include <ros/package.h>
+#include <reading_pointcloud/reading_pointcloud.h>
+#include "frmsg/people.h"
+#include "frmsg/followme_state.h"
 //#include <opencv2/opencv.hpp>
 
-typedef pcl::PointXYZRGBA PointT;
+typedef pcl::PointXYZRGB PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 
 #define NH 10
@@ -96,6 +99,11 @@ typedef struct histogram {
   float histo[NH*NS + NV];   /**< histogram array */
   int n;                     /**< length of histogram array */
 }histogram;
+
+int current_state = 0;
+// 0: STOP
+// 1: RUN
+// 2: RESUME
 
 int print_help()
 {
@@ -265,10 +273,10 @@ float histo_dist_sq( histogram* h1, histogram* h2 )
 void cloud_cb_ (const PointCloudT::ConstPtr &callback_cloud, PointCloudT::Ptr& cloud,
     bool* new_cloud_available_flag)
 {
-  cloud_mutex.lock ();    // for not overwriting the point cloud from another thread
+  //cloud_mutex.lock ();    // for not overwriting the point cloud from another thread
   *cloud = *callback_cloud;
   *new_cloud_available_flag = true;
-  cloud_mutex.unlock ();
+  //cloud_mutex.unlock ();
 }
 
 void add_hist( histogram* hist1, histogram* hist2 )
@@ -285,8 +293,7 @@ struct callback_args{
   pcl::visualization::PCLVisualizer::Ptr viewerPtr;
 };
   
-void
-pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
+void pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
 {
   struct callback_args* data = (struct callback_args *)args;	
   if (event.getPointIndex () == -1)
@@ -302,10 +309,40 @@ pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
   std::cout << current_point.x << " " << current_point.y << " " << current_point.z << std::endl;
 }
 
+void stateCallback(const frmsg::followme_state::ConstPtr& state)
+{
+  if (current_state == state->state)
+    return;
+  current_state = state->state;
+}
+
 int main (int argc, char** argv)
 {
+  //ROS Initialization
+  ros::init(argc, argv, "detecting_people");
+  ros::NodeHandle nh;
+  ros::Rate rate(13);
+
+  ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
+  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 100);
   if(pcl::console::find_switch (argc, argv, "--help") || pcl::console::find_switch (argc, argv, "-h"))
-        return print_help();
+  {
+    return print_help();
+  }
+
+  //PCL pointcloud Initialization
+  CloudConverter* cc_ = new CloudConverter();
+
+  while (!cc_->ready_xyzrgb_)
+  {
+    ros::spinOnce();
+    rate.sleep();
+    if (!ros::ok())
+    {
+      printf("Terminated by Control-c.\n");
+      return -1;
+    }
+  }
 
   // Input parameter from the .yaml
   std::string package_path_ = ros::package::getPath("detecting_people") + "/";
@@ -313,7 +350,7 @@ int main (int argc, char** argv)
 
   // Algorithm parameters:
   std::string svm_filename = package_path_ + "trainedLinearSVMForPeopleDetectionWithHOG.yaml";
-  std::cout << svm_filename << std::endl;
+  //std::cout << svm_filename << std::endl;
 
   float min_confidence = -1.5;
   float min_height = 1.3;
@@ -328,23 +365,30 @@ int main (int argc, char** argv)
   pcl::console::parse_argument (argc, argv, "--min_h", min_height);
   pcl::console::parse_argument (argc, argv, "--max_h", max_height);
 
-
   // Read Kinect live stream:
-  PointCloudT::Ptr cloud (new PointCloudT);
+  //PointCloudT::Ptr cloud (new PointCloudT);
   PointCloudT::Ptr cloud_people (new PointCloudT);
-  bool new_cloud_available_flag = false;
-  pcl::Grabber* interface = new pcl::OpenNIGrabber();
-  boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> f =
-      boost::bind (&cloud_cb_, _1, cloud, &new_cloud_available_flag);
-  interface->registerCallback (f);
-  interface->start ();
+
+  //bool new_cloud_available_flag = false;
+  cc_->ready_xyzrgb_ = false;
+  while ( !cc_->ready_xyzrgb_ )
+  {
+    ros::spinOnce();
+    rate.sleep();
+  }
+  pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud = cc_->msg_xyzrgb_;
+  //pcl::Grabber* interface = new pcl::OpenNIGrabber();
+  //boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> f =
+      //boost::bind (&cloud_cb_, _1, cloud, &new_cloud_available_flag);
+  //interface->registerCallback (f);
+  //interface->start ();
 
   // Wait for the first frame:
-  while(!new_cloud_available_flag) 
-    boost::this_thread::sleep(boost::posix_time::milliseconds(1));
-  new_cloud_available_flag = false;
+  //while(!new_cloud_available_flag) 
+    //boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+  //new_cloud_available_flag = false;
 
-  cloud_mutex.lock ();    // for not overwriting the point cloud
+  //cloud_mutex.lock ();    // for not overwriting the point cloud
 
   // Display pointcloud:
   pcl::visualization::PointCloudColorHandlerRGBField<PointT> rgb(cloud);
@@ -363,7 +407,7 @@ int main (int argc, char** argv)
   viewer.spin();
   std::cout << "done." << std::endl;
   
-  cloud_mutex.unlock ();    
+  //cloud_mutex.unlock ();    
 
   // Ground plane estimation:
   Eigen::VectorXf ground_coeffs;
@@ -399,19 +443,20 @@ int main (int argc, char** argv)
   histogram* first_hist;
 
   int max_people_num = (int)fs_->getFirstTopLevelNode()["max_people_num"];
-  //float* histo_dist = new float[max_people_num];
-  //std::vector<pcl::people::PersonCluster<PointT> >::iterator* it_vector = new std::vector<pcl::people::PersonCluster<PointT> >::iterator[max_people_num];
+  float* histo_dist = new float[max_people_num];
 
   // Main loop:
   while (!viewer.wasStopped() )
   {
-    if (new_cloud_available_flag && cloud_mutex.try_lock ())    // if a new cloud is available
+    if (cc_->ready_xyzrgb_ /*cloud_mutex.try_lock ()*/)    // if a new cloud is available
     {
-      new_cloud_available_flag = false;
+      cloud = cc_->msg_xyzrgb_;
+      PointCloudT::Ptr cloud_new(new PointCloudT(*cloud));
+      cc_->ready_xyzrgb_ = false;
 
       // Perform people detection on the new cloud:
       std::vector<pcl::people::PersonCluster<PointT> > clusters;   // vector containing persons clusters
-      people_detector.setInputCloud(cloud);
+      people_detector.setInputCloud(cloud_new);
       people_detector.setGround(ground_coeffs);                    // set floor coefficients
       people_detector.compute(clusters);                           // perform people detection
 
@@ -424,27 +469,25 @@ int main (int argc, char** argv)
       viewer.addPointCloud<PointT> (cloud, rgb, "input_cloud");
       unsigned int k = 0;
       std::vector<pcl::people::PersonCluster<PointT> >::iterator it;
-      std::vector<pcl::people::PersonCluster<PointT> >::iterator it_min;
-
-      float histo_dist_min = 2.0;
-
       for(it = clusters.begin(); it != clusters.end(); ++it)
       {
+        for ( int i = 0; i < max_people_num; i++ )
+          histo_dist[i] = 2.0;
         if(it->getPersonConfidence() > min_confidence)             // draw only people with confidence above a threshold
         {
           // draw theoretical person bounding box in the PCL viewer:
           pcl::copyPointCloud( *cloud, it->getIndices(), *cloud_people);
-	  if ( people_count == 0 )
+          if ( people_count == 0 )
       	  {
       	    first_hist = calc_histogram_a( cloud_people );
       	    people_count++;
-	    it->drawTBoundingBox(viewer, k);
+	          it->drawTBoundingBox(viewer, k);
       	  }
       	  else if ( people_count <= 10 )
       	  {
       	    histogram* hist_tmp = calc_histogram_a( cloud_people );
             add_hist( first_hist, hist_tmp );
-	    it->drawTBoundingBox(viewer, k);
+            it->drawTBoundingBox(viewer, k);
       	    //free(hist_tmp);
       	    people_count++;
       	  }
@@ -455,9 +498,7 @@ int main (int argc, char** argv)
       	    histogram* hist_tmp = calc_histogram( cloud_people );
             float tmp = histo_dist_sq( first_hist, hist_tmp );
       	    std::cout << "The histogram distance is " << tmp << std::endl;
-            histo_dist_min = tmp;
-            it_min = it;
-            //histo_dist[k] = tmp;
+            histo_dist[k] = tmp;
       	    //free(hist_tmp);
       	  }
       	  else
@@ -465,12 +506,7 @@ int main (int argc, char** argv)
       	    histogram* hist_tmp = calc_histogram( cloud_people );
             float tmp = histo_dist_sq( first_hist, hist_tmp );
             std::cout << "The histogram distance is " << tmp << std::endl;
-            if ( tmp < histo_dist_min )
-            {
-              histo_dist_min = tmp;
-              it_min = it;
-            }
-            //histo_dist[k] = tmp;
+            histo_dist[k] = tmp;
       	    //free(hist_tmp);
       	  }
           //it->drawTBoundingBox(viewer, k);
@@ -481,13 +517,19 @@ int main (int argc, char** argv)
       }
       if ( people_count > 11 )
       {
-        if ( histo_dist_min < 1.0 )
+        float min_hist_dis = histo_dist[0];
+        int min_hist_num = -1;
+        for ( int i = 1; i < max_people_num; i++ )
         {
-          it_min->drawTBoundingBox(viewer, 1);
-          std::cout << "The minimum distance of the histogram is " << histo_dist_min << std::endl;
+          if ( histo_dist[i] < 2 )
+            std::cout << "The storaged histogram distance " << i << " is " << histo_dist[i] << std::endl;
+          if ( histo_dist[i] < min_hist_dis )
+          {
+            min_hist_dis = histo_dist[i]; 
+            min_hist_num = i;
+          }
         }
-      }
-        /*int i = 0;
+        int i = 0;
         for( it = clusters.begin(); it != clusters.end(); ++it)
         {
           if ( min_hist_dis < (float)fs_->getFirstTopLevelNode()["min_hist_dis"] )
@@ -502,11 +544,13 @@ int main (int argc, char** argv)
                 break;
             }       
           }
-        } */
-        //it_vector[min_hist_num]->drawTBoundingBox(viewer, 1);
-        //std::cout << "vector" << it->getTCenter() << std::endl;  
+        } 
+        it->drawTBoundingBox(viewer, 1);
+        std::cout << "vector" << it->getTCenter() << std::endl;  
+      }
       std::cout << k << " people found" << std::endl;
       viewer.spinOnce();
+      ros::spinOnce();
 
       // Display average framerate:
       if (++count == 30)
@@ -516,7 +560,7 @@ int main (int argc, char** argv)
         count = 0;
         last = now;
       }
-      cloud_mutex.unlock ();
+      //cloud_mutex.unlock ();
     }
   }
 
