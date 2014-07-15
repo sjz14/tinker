@@ -32,8 +32,8 @@ void FollowmeCtrl::peopleCallback(frmsg::people::ConstPtr &p)
 {
     // convert p to some target
     // not sure about the usage of move_base_msgs::MoveBaseGoal
-    double x = p-> ; // bala
-    double y = p-> ; // bala
+    // double x = p-> ; // bala
+    // double y = p-> ; // bala
 
     if (people_stack_.size() > 10)
         people_stack_.pop_front();
