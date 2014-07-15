@@ -52,6 +52,7 @@ find_package(catkin REQUIRED COMPONENTS
    bindingBox.msg
    people.msg
    followme_state.msg
+   starter_state.msg
 #   Message1.msg
 #   Message2.msg
  )
