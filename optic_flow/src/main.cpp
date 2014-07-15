@@ -44,7 +44,7 @@ ty=(fy1-fy2)/2;
 vy=(fy1+fy2)/2;
 vx=(fx1+fx2)/2;
 
-*dth=(-atan(ty/LENLEG));
+*dth=(-(ty/LENLEG));
 *dx=vx+OFFSETY*sin(*dth);
 *dy=vy+OFFSETY*(1-cos(*dth));
 

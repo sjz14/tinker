@@ -25,12 +25,10 @@
         </visual>
     </link>
 
-
-
     <joint name="base_to_chassis" type = "fixed">
         <parent link = "base_link"/>
         <child link = "chassis"/>
-        <origin xyz = "0 -0.1 -0.45" rpy="0 0 -1.57"/>
+        <origin xyz = "-0.0707 0 -0.45" rpy="0 0 -1.57"/>
     </joint>
 
 <link name="motor_driver">
@@ -71,14 +69,11 @@
     </visual>
 </link>
 
-
 <joint name = "motor_driver_to_motor_axis" type = "fixed">
     <parent link = "motor_driver"/>
     <child link = "motor_axis" />
     <origin xyz = "0 0 -0.15" rpy = "1.57 0 0.7853" />
 </joint>
-
-
 
 <joint name = "motor_driver_to_motor_axis2" type = "fixed">
     <parent link = "motor_driver"/>
@@ -90,7 +85,6 @@
 <visual>
     <geometry>
     <cylinder length = "0.025" radius = "0.06" />
-
     </geometry>
     <material name = "blue" />
 </visual>

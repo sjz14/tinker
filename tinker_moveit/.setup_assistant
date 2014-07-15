@@ -1,0 +1,8 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: urdf_tinker
+    relative_path: tinker.urdf
+  SRDF:
+    relative_path: config/tinker.srdf
+  CONFIG:
+    generated_timestamp: 1405329056
