@@ -29,11 +29,13 @@ using std::string;
 using namespace LibSerial;
 using namespace std;
 SerialStream my_serial_stream ;
+char cmd[20];
 //SerialPort * my_serial_port = NULL;
 void orderCallback(const std_msgs::String::ConstPtr& msg)
 {
     ROS_INFO("I heard: [%s]",msg->data.c_str());
     if (my_serial_stream) my_serial_stream<<msg->data.c_str();
+    strcpy(cmd,msg->data.c_str());
 }
 
 int main(int argc, char** argv)
@@ -42,7 +44,7 @@ int main(int argc, char** argv)
     cout<<"serial"<<endl;
     ros::init(argc, argv, "serialport_driver");
     ros::NodeHandle n;
-    ros::Rate rate(10);
+    ros::Rate rate(40);
     std::string package_path = ros::package::getPath("serial") + "/";
     QSettings settings((package_path + "furoc.ini").c_str(),QSettings::IniFormat);
     int pos = settings.value("pos", 1).toInt();
@@ -108,7 +110,7 @@ int main(int argc, char** argv)
 
    my_serial_stream.SetBaudRate( SerialStreamBuf::BAUD_57600) ;
    std_msgs::String msg2;
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(200);
     ros::Subscriber sub = n.subscribe("order",1000,orderCallback);
     ros::Publisher pub = n.advertise<std_msgs::UInt8MultiArray>("opticflow",100);
 
@@ -116,10 +118,8 @@ int main(int argc, char** argv)
 
     while(ros::ok())
     {
-	//my_serial_port->Write(string("stg000g000g000g000e"));
 	my_serial_stream<<"stg000g000g000g000e";
-	//char buffer_opt[8];
-	//my_serial_stream.read(buffer_opt,8);
+	my_serial_stream<<cmd;
 	vector<unsigned char> buffer_opt;
 	loop_rate.sleep();
 	while (my_serial_stream.rdbuf()->in_avail()>0)
