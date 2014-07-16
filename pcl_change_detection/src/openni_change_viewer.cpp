@@ -66,6 +66,12 @@ class OpenNIChangeViewer
     void 
     cloud_cb_ (const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &cloud)
     {
+
+      float avg_x = 0;
+      float avg_y = 0;
+      int num = 0;
+      float avg_dep = 0;
+
       std::cerr << cloud->points.size() << " -- ";
 
       // assign point cloud to octree
@@ -91,10 +97,18 @@ class OpenNIChangeViewer
           filtered_cloud->points.reserve(newPointIdxVector->size());
 
           for (std::vector<int>::iterator it = newPointIdxVector->begin (); it != newPointIdxVector->end (); it++)
+          {
+            avg_x += filtered_cloud->points[*it].x;
+            avg_y += filtered_cloud->points[*it].y;
+            avg_dep += filtered_cloud->points[*it].z;
+            num++;
             filtered_cloud->points[*it].rgba = 255<<16;
+          }
 
           if (!viewer.wasStopped())
             viewer.showCloud (filtered_cloud);
+
+          std::cout << "avg_x "  << avg_x / num << " avg_y " << avg_y / num << " agv_dep " << avg_dep / num << std::endl; 
 
           break;
         case ONLYDIFF_MODE:
@@ -149,7 +163,7 @@ main (int argc, char* argv[])
   ros::init(argc, argv, "change_detection");
   ros::NodeHandle nh;
   int mode = REDDIFF_MODE;
-  int noise_filter = 7;
+  int noise_filter = 20;
   double resolution = 0.01;
   OpenNIChangeViewer v (resolution, mode, noise_filter);
   ros::Subscriber sub = nh.subscribe<pcl::PointCloud<pcl::PointXYZRGB> >("/openni/points2", 1, &OpenNIChangeViewer::cloud_cb_, &v);

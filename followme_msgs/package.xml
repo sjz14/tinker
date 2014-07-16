@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package>
-  <name>test</name>
+  <name>followme_msgs</name>
   <version>0.0.0</version>
-  <description>The test package</description>
+  <description>The followme_msgs package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="xf@todo.todo">xf</maintainer>
+  <maintainer email="badpoet@todo.todo">badpoet</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/test</url> -->
+  <!-- <url type="website">http://wiki.ros.org/followme_msgs</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
@@ -41,13 +41,11 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>actionlib</build_depend>
   <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
-  <run_depend>actionlib</run_depend>
-  <build_depend>frmsg</build_depend>
-  <run_depend>frmsg</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
