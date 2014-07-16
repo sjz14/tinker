@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   frmsg
+  actionlib
 )
 
 ## System dependencies are found with CMake's conventions
@@ -82,10 +83,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES followme_ctrl
-#  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp std_msgs
+  DEPENDS system_lib
 )
 
 ###########
@@ -94,10 +95,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a cpp library
 # add_library(followme_ctrl
@@ -105,11 +103,14 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(followme_ctrl_node src/followme_ctrl_node.cpp)
+add_executable(followme_ctrl_node 
+    src/followme_ctrl_node.cpp
+    src/followme_ctrl.cpp
+)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(followme_ctrl_node followme_ctrl_generate_messages_cpp)
+add_dependencies(followme_ctrl_node ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(followme_ctrl_node

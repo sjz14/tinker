@@ -1,4 +1,6 @@
 #include <followme_ctrl/followme_ctrl.h>
+#include <ros/time.h>
+#include <ros/duration.h>
 
 FollowmeCtrl::FollowmeCtrl(ros::NodeHandle nh):
     nh_(nh),
@@ -8,6 +10,11 @@ FollowmeCtrl::FollowmeCtrl(ros::NodeHandle nh):
     nodeInit();
     navigationInit();
     people_stack_.clear();
+}
+
+FollowmeCtrl::~FollowmeCtrl()
+{
+    // nothing
 }
 
 void FollowmeCtrl::nodeInit()
@@ -31,18 +38,23 @@ void FollowmeCtrl::navigationInit()
     }
 }
 
-void FollowmeCtrl::starterCallback(frmsg::starter_state::ConstPtr &p)
+void FollowmeCtrl::starterCallback(const frmsg::starter_state::ConstPtr &p)
 {
     if (current_state_ != frmsg::followme_state::NOTSTART)
         return;
     if (p->state == frmsg::starter_state::FOLLOWME) {
         current_state_ = frmsg::followme_state::RUNNING;
         ROS_INFO("Followme now start!");
-        state_publisher_.publish(current_state_);
+        ros::Duration d(2.0);
+        d.sleep();
+
+        frmsg::followme_state ns;
+        ns.state = current_state_;
+        state_publisher_.publish(ns);
     }
 }
 
-void FollowmeCtrl::peopleCallback(frmsg::people::ConstPtr &p)
+void FollowmeCtrl::peopleCallback(const frmsg::people::ConstPtr &p)
 {
     using namespace std;
 
@@ -54,9 +66,9 @@ void FollowmeCtrl::peopleCallback(frmsg::people::ConstPtr &p)
     decide(p);
 }
 
-void decide(frmsg::people::ConstPtr &p)
+void FollowmeCtrl::decide(const frmsg::people::ConstPtr &p)
 {
-    paint_people(p);
+    paintPeople(p);
     if (p->id < 0) {
         ROS_INFO("Alas? Where is the people");
         return; // do nothing
@@ -71,11 +83,11 @@ void decide(frmsg::people::ConstPtr &p)
     }
 }
 
-void paintPeople(frmsg::people::ConstPtr &p)
+void FollowmeCtrl::paintPeople(const frmsg::people::ConstPtr &p)
 {
     geometry_msgs::PoseArray::Ptr pose_array_msg;
     pose_array_msg = boost::make_shared<geometry_msgs::PoseArray>();
-    for (int i = 0; i < p.size(); i++) {
+    for (int i = 0; i < p->x.size(); i++) {
         geometry_msgs::Pose pose_msg;
         pose_msg.position.x = p->x[i];
         pose_msg.position.y = p->depth[i];
@@ -84,12 +96,12 @@ void paintPeople(frmsg::people::ConstPtr &p)
         pose_msg.orientation.y = 0;
         pose_msg.orientation.z = 0;
         pose_msg.orientation.w = 0;
-        pose_array_msg.push_back(pose_msg);
+        pose_array_msg->poses.push_back(pose_msg);
     }
-    people_pos_publisher_.publish(pose_array_msg);
+    people_pos_publisher_.publish(*pose_array_msg);
 }
 
-void sendTarget(double x, double y, double z, double w)
+void FollowmeCtrl::sendTarget(double x, double y, double z, double w)
 {
     move_base_msgs::MoveBaseGoal goal;
 
@@ -104,17 +116,17 @@ void sendTarget(double x, double y, double z, double w)
     goal.target_pose.pose.orientation.w = w;
 
     ROS_INFO("Sending goal");
-    ac.sendGoal(goal);
+    ac_.sendGoal(goal);
 
     // not scientific: target should be refreshed continuously
     // to be changed!
 
-    ac.waitForResult();
+    ac_.waitForResult();
 
-    if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    if(ac_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
         ROS_INFO("Hooray, the base moved 1 meter forward");
     else
         ROS_INFO("The base failed to move forward 1 meter for some reason");
 
-    return 0;
+    return;
 }
