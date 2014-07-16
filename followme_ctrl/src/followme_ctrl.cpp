@@ -2,7 +2,7 @@
 
 FollowmeCtrl::FollowmeCtrl(ros::NodeHandle nh):
     nh_(nh),
-    current_state_(followme::NOTSTART),
+    current_state_(frmsg::followme_state::NOTSTART),
     ac_("move_base", true)
 {
     nodeInit();
@@ -19,6 +19,9 @@ void FollowmeCtrl::nodeInit()
 
     state_publisher_ = nh_.advertise<frmsg::followme_state>(
         "followme_state", 5);
+
+    people_pos_publisher_ = nh_.advertise<geometry_msgs::PoseArray>(
+        "followme_people_pos", 5);
 }
 
 void FollowmeCtrl::navigationInit()
@@ -28,25 +31,65 @@ void FollowmeCtrl::navigationInit()
     }
 }
 
+void FollowmeCtrl::starterCallback(frmsg::starter_state::ConstPtr &p)
+{
+    if (current_state_ != frmsg::followme_state::NOTSTART)
+        return;
+    if (p->state == frmsg::starter_state::FOLLOWME) {
+        current_state_ = frmsg::followme_state::RUNNING;
+        ROS_INFO("Followme now start!");
+        state_publisher_.publish(current_state_);
+    }
+}
+
 void FollowmeCtrl::peopleCallback(frmsg::people::ConstPtr &p)
 {
-    // convert p to some target
-    // not sure about the usage of move_base_msgs::MoveBaseGoal
-    // double x = p-> ; // bala
-    // double y = p-> ; // bala
+    using namespace std;
 
-    if (people_stack_.size() > 10)
-        people_stack_.pop_front();
-    people_stack_.push_back(std::makepair(x, y));
-    decide();
+    // if (people_stack_.size() > 10)
+    //     people_stack_.pop_front();
+    // people_stack_.push_back(std::makepair(x, y));
+    // decide();
+
+    decide(p);
 }
 
-void decide()
+void decide(frmsg::people::ConstPtr &p)
 {
-    // to be done
+    paint_people(p);
+    if (p->id < 0) {
+        ROS_INFO("Alas? Where is the people");
+        return; // do nothing
+    } else {
+        double people_x = p->x[p->id];
+        double people_y = p->depth[p->id];
+        double people_z = -p->y[p->id];
+        double w = 0;
+
+        sendTarget(people_x, 0.5 * people_y, people_z, w);
+        ROS_INFO("Yeah I see you");
+    }
 }
 
-void sendTarget(double x, double w)
+void paintPeople(frmsg::people::ConstPtr &p)
+{
+    geometry_msgs::PoseArray::Ptr pose_array_msg;
+    pose_array_msg = boost::make_shared<geometry_msgs::PoseArray>();
+    for (int i = 0; i < p.size(); i++) {
+        geometry_msgs::Pose pose_msg;
+        pose_msg.position.x = p->x[i];
+        pose_msg.position.y = p->depth[i];
+        pose_msg.position.z = -p->y[i];
+        pose_msg.orientation.x = 0;
+        pose_msg.orientation.y = 0;
+        pose_msg.orientation.z = 0;
+        pose_msg.orientation.w = 0;
+        pose_array_msg.push_back(pose_msg);
+    }
+    people_pos_publisher_.publish(pose_array_msg);
+}
+
+void sendTarget(double x, double y, double z, double w)
 {
     move_base_msgs::MoveBaseGoal goal;
 
@@ -55,6 +98,9 @@ void sendTarget(double x, double w)
     goal.target_pose.header.stamp = ros::Time::now();
 
     goal.target_pose.pose.position.x = x;
+    goal.target_pose.pose.position.y = y;
+    goal.target_pose.pose.position.z = z;
+
     goal.target_pose.pose.orientation.w = w;
 
     ROS_INFO("Sending goal");
