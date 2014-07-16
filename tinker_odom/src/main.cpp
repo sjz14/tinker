@@ -70,16 +70,18 @@ void opticCallback(const std_msgs::UInt8MultiArray::ConstPtr& msg)
   	buf[i] = msg->data[i];
     Opt_Deltamove(buf,&dx,&dy,&dth);
     cout<<"dx"<<dx<<"dy"<<dy<<"dth"<<dth<<endl;
-    x+=(1.414/2)*(dx-dy)/1000.0;
-    x+=(1.414/2)*(dy+dx)/1000.0;
+    double ddx=(1.414/2)*(dx-dy)/1000.0;
+    double ddy=(1.414/2)*(dy+dx)/1000.0;
     th-=dth;
+    double dy2=ddx*cos(th) + ddy*sin(th);
+    double dx2= - ddx*cos(th) + ddy*cos(th);
+    x+=dx2;
+    y+=dy2;
     double dt=(current_time - last_time).toSec();
-    vx = dx/dt;
-    vy = dy/dt;
+    vy = dx2/dt;
+    vx = dy2/dt;
     vth = dth/dt;
     last_time = current_time;
-
-
 }
 
 int main(int argc, char** argv){
@@ -96,21 +98,8 @@ int main(int argc, char** argv){
   while(n.ok()){
 
     ros::spinOnce();               // check for incoming messages
-
-    //compute odometry in a typical way given the velocities of the robot
-    //double dt = (current_time - last_time).toSec();
-    //double delta_x = (vx * cos(th) - vy * sin(th)) * dt;
-    //double delta_y = (vx * sin(th) + vy * cos(th)) * dt;
-    //double delta_th = vth * dt;
-
-    //x += delta_x;
-    //y += delta_y;
-    //th += delta_th;
-
-    //since all odometry is 6DOF we'll need a quaternion created from yaw
     geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
 
-    //first, we'll publish the transform over tf
     geometry_msgs::TransformStamped odom_trans;
     odom_trans.header.stamp = current_time;
     odom_trans.header.frame_id = "odom";
@@ -121,7 +110,6 @@ int main(int argc, char** argv){
     odom_trans.transform.translation.z = 0.0;
     odom_trans.transform.rotation = odom_quat;
 
-    //send the transform
     odom_broadcaster.sendTransform(odom_trans);
 
     //next, we'll publish the odometry message over ROS

@@ -1,0 +1,8 @@
+controller_list:
+  - name: fake_arm_controller
+    joints:
+      - base_link_to_arm_holder
+      - holder_to_arm0
+      - arm0_to_arm1
+      - arm1_to_arm2
+      - arm2_to_arm3
