@@ -4,13 +4,14 @@
 # Project       : speech_recognize
 # Author        : bss
 # created by bss at 2014-07-16
-#  Last modified: 2014-07-16, 02:02:04
+#  Last modified: 2014-07-16, 17:18:38
 
 import sys
 import os
 import getopt
 import roslib
 import rospy
+import rospkg
 from std_msgs.msg import String
 from frmsg.msg import starter_state
 
@@ -18,6 +19,8 @@ from frmsg.msg import starter_state
 pub = rospy.Publisher('/starter/cmd', starter_state)
 specified = False
 task = ""
+TASK_LIST = ['followme', 'pickandplace', 'avoidthat',
+        'whatdidyousay', 'emergency']
 state = starter_state()
 
 
@@ -30,14 +33,25 @@ def Usage():
     print('example:')
     print('rosrun speech_recognize rec_starter_cmd.py')
     print('rosrun speech_recognize rec_starter_cmd.py -t "follow me"')
+    print('')
+    print('task list:')
+    print(TASK_LIST)
 
 
 def publish_state(state):
     rate = rospy.Rate(100)
-    print('pub')
     for i in range(0, 5):
         pub.publish(state)
         rate.sleep()
+
+
+def playSound(speech):
+    mp3dir = rospkg.RosPack().get_path('speech_recognize') + '/resource/sounds/'
+    if os.path.exists(mp3dir + speech + '.mp3'):
+        os.system('mplayer "' + mp3dir + speech + '.mp3"')
+    else:
+        ans_speak = speech.replace("'", '')
+        os.system("espeak -s 130 --stdout '" + ans_speak + "' | aplay")
 
 
 def callback(data):
@@ -47,11 +61,18 @@ def callback(data):
         if cmd != task:
             return
 
-    if cmd == "tinker please follow me":
-        print(cmd)
-        state.state = starter_state.FOLLOWME
-        print(state)
-        publish_state(state)
+    if 'how are you tinker how are you tinker' == cmd:
+        print('pocketsphinx is ok.')
+        playSound('I hear you.')
+
+    if 'tinker please follow me' == cmd:
+        if '' == task or 'followme' == task:
+            print(cmd)
+            playSound('Ok I will follow you.')
+            state.state = starter_state.FOLLOWME
+            publish_state(state)
+        else:
+            print('not this task!')
 
 
 def listener():
