@@ -6,6 +6,7 @@ project(frmsg)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   message_generation
+  std_msgs
 )
 #include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #rosbuild_init()
@@ -49,6 +50,9 @@ find_package(catkin REQUIRED COMPONENTS
    box.msg
    dec.msg
    bindingBox.msg
+   people.msg
+   followme_state.msg
+   starter_state.msg
 #   Message1.msg
 #   Message2.msg
  )
@@ -70,7 +74,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
  generate_messages(
    DEPENDENCIES
-   #std_msgs  # Or other packages containing msgs
+   std_msgs  # Or other packages containing msgs
  )
 #generate_messages()
 ###################################

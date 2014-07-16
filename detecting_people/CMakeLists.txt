@@ -6,10 +6,11 @@ project(detecting_people)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
   pcl_ros
   pcl_conversions
+  reading_pointcloud
+  frmsg
 )
 find_package(OpenCV)
 find_package(PCL 1.7 REQUIRED)
@@ -100,6 +101,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${reading_pointcloud_INCLUDE_DIRS}
 )
 link_directories(
   ${PCL_LIBRARY_DIRS}
@@ -146,11 +148,11 @@ target_link_libraries(detecting_people ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${Op
 # )
 
 ## Mark cpp header files for installation
- install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
-   PATTERN ".svn" EXCLUDE
- )
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

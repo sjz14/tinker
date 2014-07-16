@@ -117,6 +117,7 @@ add_definitions(${PCL_DEFINITIONS})
 # add_executable(openni_pcl_grabber_node src/openni_pcl_grabber_node.cpp)
 add_executable(openni_pcl_grabber_node src/main.cpp)
 add_executable(test_show_pts test/show_pts.cpp)
+add_executable(test_send_cloud test/send_cloud.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -132,6 +133,11 @@ target_link_libraries(openni_pcl_grabber_node
   ${OpenCV_LIBRARIES}
 )
 target_link_libraries(test_show_pts
+  ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+target_link_libraries(test_send_cloud
   ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}

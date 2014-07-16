@@ -1,7 +1,7 @@
 // Project      : openni_pcl_grabber
 // File         : main.cpp
 // Creation Date: 2014-07-09
-// Last modified: 2014-07-09, 03:05:39
+// Last modified: 2014-07-11, 01:08:48
 // Description  : 转发 openni 中提取的 pcl 到 ros
 // 
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     {
         boost::this_thread::sleep(boost::posix_time::milliseconds(1));
     }
-    cloud_mutex.lock();     // for not overwriting the point cloud
+    //cloud_mutex.lock();     // for not overwriting the point cloud
 
     ros::Rate loop_rate(4);
     while (nh.ok())

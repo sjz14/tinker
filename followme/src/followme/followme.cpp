@@ -1,17 +1,17 @@
 // Project:     followme
 // File:        followme.cpp
 // Created by bss at 2013-12-21
-// Last modified: 2014-03-11, 15:33:27
+// Last modified: 2014-07-11, 10:24:35
 // Description: 
 
-#include "followme.h"
+#include "followme/followme.h"
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <opencv2/opencv.hpp>
-#include "reading_image.h"
+#include "reading_image/reading_image.h"
 #include "macro.h"
-#include "TLD.h"
-#include "fm_utils.h"
+#include "OpenTLD/TLD.h"
+#include "followme/fm_utils.h"
 #include "frmsg/box.h"
 
 const char FollowmeDN::WINDOW_NAME[] = "followme image";

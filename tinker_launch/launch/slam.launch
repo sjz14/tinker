@@ -5,10 +5,16 @@
     <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node" >
     </node>
 
-    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" >
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output = "screen">
         <param name="map_udpate_interval" value="1.0"/>
         <param name="maxUrange" value="50.0"/>
         <param name="odom_frame" value="world"/>
+        <param name = "xmin" value="-10.0"/>
+        <param name = "ymin" value="-10.0"/>
+        <param name = "xmax" value="10.0"/>
+        <param name = "ymax" value="10.0"/>
+        <param name = "delta" value="0.03"/>
+        <param name = "maxRange" value = "55.0"/>
     </node>
 
     <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher_node" output="screen">

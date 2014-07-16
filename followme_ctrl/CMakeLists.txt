@@ -5,8 +5,11 @@ project(followme_ctrl)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  sensor_msgs
+  cv_bridge
   roscpp
   std_msgs
+  frmsg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -102,7 +105,7 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-# add_executable(followme_ctrl_node src/followme_ctrl_node.cpp)
+add_executable(followme_ctrl_node src/followme_ctrl_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -112,6 +115,9 @@ include_directories(
 # target_link_libraries(followme_ctrl_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(followme_ctrl_node
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
