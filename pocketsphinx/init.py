@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # file: init.py
 # created by bss at 2014-05-09
-# Last modified: 2014-05-09, 12:49:43
+# Last modified: 2014-07-16, 17:57:05
 # 初始化一组语音识别的任务
 #
 
@@ -55,12 +55,6 @@ def initDir(task):
     os.system('touch ' + taskdir + 'sent.txt')
     os.system('touch ' + taskdir + 'gram.jsgf')
 
-def processTask(task):
-    furocdir = rospkg.RosPack().get_path('pocketsphinx') + '/furoc/'
-    taskdir = furocdir + task + '/'
-    os.system('python ' + furocdir + 'input2dict.py -t ' + task)
-    os.system('python ' + furocdir + 'jsgf2fsg.py -t ' + task)
-    
     fp = open(taskdir + task + '.launch', 'w')
     fp.write('<launch>\n')
     fp.write('\n')
@@ -73,6 +67,13 @@ def processTask(task):
     fp.write('\n')
     fp.write('</launch>\n')
     fp.close()
+
+def processTask(task):
+    furocdir = rospkg.RosPack().get_path('pocketsphinx') + '/furoc/'
+    taskdir = furocdir + task + '/'
+    os.system('python ' + furocdir + 'input2dict.py -t ' + task)
+    os.system('python ' + furocdir + 'jsgf2fsg.py -t ' + task)
+    
 
 if __name__ == '__main__':
     main(sys.argv)
