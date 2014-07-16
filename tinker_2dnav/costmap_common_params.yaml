@@ -10,5 +10,7 @@ inflation_radius: 0.55
 transform_tolerance: 0.8
 
 
-observation_sources: laser_scan_sensor
+observation_sources: laser_scan_sensor laser_scan_bottom
+
 laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan, marking: true, clearing: true, max_obstacle_height: 1.2,  min_obstacle_height: 0.0}
+laser_scan_bottom: {sensor_frame: laser_bottom, data_type: LaserScan, topic: scan_bottom, marking: true, clearing: true, max_obstacle_height: 1.2,  min_obstacle_height: 0.0}

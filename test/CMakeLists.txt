@@ -1,20 +1,10 @@
-# Created by bss at 2013-12-21
-# Last modified: 2014-07-13, 12:09:11
-
 cmake_minimum_required(VERSION 2.8.3)
-project(followme2)
+project(test)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  sensor_msgs
-  followme
-  reading_image
-)
-find_package(OpenCV)
+find_package(catkin REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -73,7 +63,7 @@ find_package(OpenCV)
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
 
 ###################################
@@ -87,8 +77,8 @@ find_package(OpenCV)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES followme2
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  LIBRARIES test
+#  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
 
@@ -99,46 +89,23 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-  include
-  ${followme_INCLUDE_DIRS}
-  ${reading_image_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
-)
 
 ## Declare a cpp library
-# add_library(followme
-#   src/${PROJECT_NAME}/followme2.cpp
+# add_library(test
+#   src/${PROJECT_NAME}/test.cpp
 # )
-add_library(followmedn2 src/followme/followme.cpp)
 
 ## Declare a cpp executable
-# add_executable(followme_node src/followme_node.cpp)
-add_executable(followme_decision2 src/followme/main.cpp)
+# add_executable(test_node src/test_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(followme_node followme_generate_messages_cpp)
+# add_dependencies(test_node test_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(followme_node
+# target_link_libraries(test_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(followmedn2
-    ${OpenCV_LIBRARIES}
-)
-
-target_link_libraries(followme_decision2
-    followmedn2
-    fm_utils
-    reading_image
-    tld
-    LKTracker
-    ferNN
-    tld_utils
-    ${catkin_LIBRARIES}
-)
 
 #############
 ## Install ##
@@ -155,7 +122,7 @@ target_link_libraries(followme_decision2
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS followme followme_node
+# install(TARGETS test test_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -180,7 +147,7 @@ target_link_libraries(followme_decision2
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_followme.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_test.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -6,7 +6,16 @@
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
     
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
-    <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node" >
+    <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node1" >
+        <param name="port" type="string" value="/dev/ttyACM0" />
+        <param name = "frame_id" type = "string" value = "laser" />
+        <remap from="scan" to="scan" />
+    </node>
+    
+    <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node2" >
+        <param name="port" type="string" value="/dev/ttyACM1" />
+        <param name = "frame_id" type = "string" value = "laser_bottom" />
+        <remap from="scan" to="scan_bottom" />
     </node>
     
     <node pkg="serial" type="serial_node" name="serial_node">

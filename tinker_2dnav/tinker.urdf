@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <robot name = "tinker">
-    <link name = "base_link">
+    <link name = "base_link" >
+
+    </link>
+
+
+    <link name = "robot_base">
         <visual>
             <geometry>
                 <cylinder length = "1.2" radius = "0.08" />
@@ -12,7 +17,12 @@
         </visual>
 
     </link>
+    <joint name = "base_link_to_base" type="fixed">
+        <parent link = "base_link" />
+        <child link = "robot_base" />
+        <origin xyz = "0 0 0.6" rpy="0 0 0" />
 
+    </joint>
     <link name = "chassis">
         <visual>
             <geometry>
@@ -25,12 +35,27 @@
         </visual>
     </link>
 
+<link name = "laser_bottom_holder">
+    <visual>
+        <geometry>
+            <box size="0.10 .20 .01" />
+        </geometry>
+      <material name="blue">
+      <color rgba = "0 0 0.8 1" />
+      </material>
+    </visual>
+</link>
 
+<joint name = "chasis_to_laser_bottom_holder" type="fixed" >
+    <parent link = "chassis" />
+    <child link = "laser_bottom_holder" />
+    <origin xyz = "0 0.25 0" rpy = "0 0 0 "/>
+</joint>
 
     <joint name="base_to_chassis" type = "fixed">
-        <parent link = "base_link"/>
+        <parent link = "robot_base"/>
         <child link = "chassis"/>
-        <origin xyz = "0 -0.1 -0.45" rpy="0 0 -1.57"/>
+        <origin xyz = "-0.0707  0 -0.45" rpy="0 0 -1.57"/>
     </joint>
 
 <link name="motor_driver">
@@ -162,8 +187,8 @@
 </visual>
 </link>
 
-<joint name = "base_link_to_camera" type = "fixed">
-    <parent link = "base_link" />
+<joint name = "robot_base_to_camera" type = "fixed">
+    <parent link = "robot_base" />
     <child link = "camera_holder" />
     <origin xyz = "0 0 0.65" rpy = "0 0 0.7853"/>
 
@@ -187,6 +212,27 @@
 </joint>
 
 
+
+<link name = "laser_bottom">
+    <visual>
+    <geometry>
+        <cylinder length = "0.05" radius = "0.025" />
+        <origin xyz = "0 0 0.05" rpy="0 0 0" />
+    </geometry>
+    <material name = "blue" />
+    </visual>
+</link>
+
+
+<joint name = "laser_bottom_holder_to_laser_bottom"  type="fixed">
+    <parent link = "laser_bottom_holder" />
+    <child link = "laser_bottom" />
+    <origin xyz="0 0 -0.05" rpy = "0 3.14 -1.57" />
+</joint>
+
+
+
+
 <sensor name="laser_sensor" update_rate="20">
     <parent link="laser"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -207,9 +253,9 @@
 </visual>
 </link>
 
-<joint name = "base_link_to_arm_holder" type = "prismatic">
+<joint name = "robot_base_to_arm_holder" type = "prismatic">
     <origin xyz="0 0 0.3" rpy = "0 0 -1.57"/>
-    <parent link = "base_link" />
+    <parent link = "robot_base" />
     <child link = "arm_holder" />
     <axis xyz="0 0 1" />
     <limit effort = "30" velocity = "1.0" lower = "-0.1" upper = "0.1" />
