@@ -3,7 +3,7 @@
 # File          : fetch_google.py
 # Author        : bss
 # Creation date : 2014-05-10
-#  Last modified: 2014-05-10, 22:03:58
+#  Last modified: 2014-07-20, 02:43:12
 # Description   : Hacking google tts api
 #
 
@@ -23,6 +23,11 @@ def main(argv):
     rcdir = rospkg.RosPack().get_path('answer_questions') + '/resource/'
     # answer
     fp = open(rcdir + 'answers.txt', 'r')
+    for line in fp.readlines():
+        sentence = line.strip()
+        if sentence != '':
+            getAnswerSpeech(str(sentence))
+    fp = open(rcdir + 'questions.txt', 'r')
     for line in fp.readlines():
         sentence = line.strip()
         if sentence != '':

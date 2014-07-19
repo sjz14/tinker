@@ -52,6 +52,7 @@ find_package(catkin REQUIRED COMPONENTS
    bindingBox.msg
    people.msg
    followme_state.msg
+   starter_state.msg
 #   Message1.msg
 #   Message2.msg
  )
@@ -91,9 +92,7 @@ catkin_package(
   CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
-#generate_messages()
 
-#rosbuild_genmsg()
 ###########
 ## Build ##
 ###########
