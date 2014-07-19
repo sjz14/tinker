@@ -1,0 +1,3 @@
+digraph G {
+"map" -> "world"[label="Broadcaster: /slam_gmapping\nAverage rate: 22.001 Hz\nMost recent transform: 1405792511.751 \nBuffer length: 0.500 sec\n"];
+}
