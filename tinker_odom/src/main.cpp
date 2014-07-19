@@ -101,7 +101,7 @@ int main(int argc, char** argv){
     geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
 
     geometry_msgs::TransformStamped odom_trans;
-    odom_trans.header.stamp = current_time;
+    odom_trans.header.stamp = current_time + ros::Duration(0.2);
     odom_trans.header.frame_id = "odom";
     odom_trans.child_frame_id = "base_link";
 
@@ -114,7 +114,7 @@ int main(int argc, char** argv){
 
     //next, we'll publish the odometry message over ROS
     nav_msgs::Odometry odom;
-    odom.header.stamp = current_time;
+    odom.header.stamp = current_time + ros::Duration(0.2);
     odom.header.frame_id = "odom";
 
     //set the position
