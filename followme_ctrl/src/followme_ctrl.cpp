@@ -27,6 +27,9 @@ void FollowmeCtrl::nodeInit()
     state_publisher_ = nh_.advertise<frmsg::followme_state>(
         "followme_state", 5);
 
+    starter_subscriber_ = nh_.subscribe(
+        "starter/cmd", 1, &FollowmeCtrl::starterCallback, this);
+
     people_pos_publisher_ = nh_.advertise<geometry_msgs::PoseArray>(
         "followme_people_pos", 5);
 }
