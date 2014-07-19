@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-05-10, 22:17:20
+#  Last modified: 2014-07-20, 00:46:41
 # Description   : Answer question listed in resource/
 #
 
@@ -12,10 +12,14 @@ import os
 import rospkg
 import rospy
 from std_msgs.msg import String
+from std_srvs.srv import *
 
 ANS = {}
+allow = True
 
 def getQuestionCallback(data):
+    if not allow:
+        return
     ques = str(data.data).strip()
     try:
         ans = ANS[ques.upper()]
@@ -37,6 +41,16 @@ def playSound(answer):
     else:
         ans_speak = answer.replace("'", '')
         os.system("espeak -s 130 --stdout '" + ans_speak + "' | aplay")
+
+def start(req):
+    print('start working')
+    allow = True
+    return EmptyResponse()
+
+def stop(req):
+    print('stop working')
+    allow = False
+    return EmptyResponse()
 
 def main(argv):
     rcdir = rospkg.RosPack().get_path('answer_questions') + '/resource/'
@@ -61,10 +75,15 @@ def main(argv):
         ANS[ques[i]] = ans[i]
     print(str(len(ANS)) + ' q&a find.')
     
+    stop(None)
+
     # Listen to /recognizer/output from pocketsphinx, task:answer
     rospy.init_node('answer_node', anonymous=True)
     rospy.Subscriber('/recognizer/output', String, getQuestionCallback)
+    rospy.Service("/answer/start", Empty, start)
+    rospy.Service("/answer/stop", Empty, stop)
     rospy.spin()
 
 if __name__ == '__main__':
     main(sys.argv)
+
