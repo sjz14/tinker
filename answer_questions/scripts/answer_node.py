@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-20, 00:46:41
+#  Last modified: 2014-07-20, 02:29:06
 # Description   : Answer question listed in resource/
 #
 
@@ -15,24 +15,43 @@ from std_msgs.msg import String
 from std_srvs.srv import *
 
 ANS = {}
-allow = True
 
-def getQuestionCallback(data):
-    if not allow:
-        return
-    ques = str(data.data).strip()
-    try:
-        ans = ANS[ques.upper()]
-    except:
-        print("I can't answer your question: " + ques)
-        print('Make sure you use the correct launch file in pocketsphinx.')
-        sys.exit(1)
-    print(ques + '?')
-    print('-' + ans)
-    if ques.upper() == "WHO ARE YOU":
-        os.system("espeak -s 130 -vzh --stdout '我的名字叫 Tinker' | aplay")
-        sys.exit(0)
-    playSound(ans)
+class answer_handler:
+    def __init__(self):
+        self.allow = True
+
+    def start(self, req):
+        print('start working')
+        self.allow = True
+        return EmptyResponse()
+
+    def stop(self, req):
+        print('stop working')
+        self.allow = False
+        return EmptyResponse()
+
+    def getQuestionCallback(self, data):
+        if not self.allow:
+            print('job stopped.')
+            return
+
+        ques = str(data.data).strip()
+        try:
+            ans = ANS[ques.upper()]
+        except:
+            print("I can't answer your question: " + ques)
+            print('Make sure you use the correct launch file in pocketsphinx.')
+            sys.exit(1)
+        print(ques + '?')
+        print('-' + ans)
+    
+        try:
+            answer_once = rospy.ServiceProxy('/answer/answer_once', Empty)
+            answer_once()
+        except rospy.ServiceException, e:
+            print("Service call failed: %s"%e)
+
+        playSound(ans)
 
 def playSound(answer):
     mp3dir = rospkg.RosPack().get_path('answer_questions') + '/resource/sounds/'
@@ -41,16 +60,6 @@ def playSound(answer):
     else:
         ans_speak = answer.replace("'", '')
         os.system("espeak -s 130 --stdout '" + ans_speak + "' | aplay")
-
-def start(req):
-    print('start working')
-    allow = True
-    return EmptyResponse()
-
-def stop(req):
-    print('stop working')
-    allow = False
-    return EmptyResponse()
 
 def main(argv):
     rcdir = rospkg.RosPack().get_path('answer_questions') + '/resource/'
@@ -75,13 +84,14 @@ def main(argv):
         ANS[ques[i]] = ans[i]
     print(str(len(ANS)) + ' q&a find.')
     
-    stop(None)
+    ah = answer_handler()
+    ah.stop(None)
 
     # Listen to /recognizer/output from pocketsphinx, task:answer
     rospy.init_node('answer_node', anonymous=True)
-    rospy.Subscriber('/recognizer/output', String, getQuestionCallback)
-    rospy.Service("/answer/start", Empty, start)
-    rospy.Service("/answer/stop", Empty, stop)
+    rospy.Subscriber('/recognizer/output', String, ah.getQuestionCallback)
+    rospy.Service("/answer/start", Empty, ah.start)
+    rospy.Service("/answer/stop", Empty, ah.stop)
     rospy.spin()
 
 if __name__ == '__main__':
