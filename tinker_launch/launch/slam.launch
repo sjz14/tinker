@@ -9,16 +9,18 @@
         <param name="map_udpate_interval" value="1.0"/>
         <param name="maxUrange" value="50.0"/>
         <param name="odom_frame" value="world"/>
-        <param name = "xmin" value="-10.0"/>
-        <param name = "ymin" value="-10.0"/>
-        <param name = "xmax" value="10.0"/>
-        <param name = "ymax" value="10.0"/>
+        <param name = "xmin" value="-20.0"/>
+        <param name = "ymin" value="-2.0"/>
+        <param name = "xmax" value="20.0"/>
+        <param name = "ymax" value="20.0"/>
         <param name = "delta" value="0.03"/>
         <param name = "maxRange" value = "55.0"/>
     </node>
 
     <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher_node" output="screen">
         <param name="max_iterations" value="15" />
+        <param name = "fixed_frame" value = "map" />
+        <param name = "use_imu" value="false" />
     </node>
 
 </launch>
