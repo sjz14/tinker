@@ -314,6 +314,7 @@ pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
 
 void stateCallback(const frmsg::followme_state::ConstPtr& state)
 {
+  printf("change state to something %d\n", state->state);
   if (current_state == state->state)
     return;
   current_state = state->state;
@@ -327,8 +328,8 @@ int main (int argc, char** argv)
   ros::NodeHandle nh;
   ros::Rate rate(13);
 
-  ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
-  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 100);
+  ros::Subscriber state_sub = nh.subscribe("followme_state", 5, &stateCallback);
+  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 5);
   frmsg::people pub_people_;
 
   CloudConverter* cc_ = new CloudConverter();
@@ -591,7 +592,9 @@ int main (int argc, char** argv)
     }
     else
     {
-      std::cout << "In state 0!!!!!!!!!" << std::endl;
+      viewer.spinOnce();
+      ros::spinOnce();
+      // std::cout << "In state 0!!!!!!!!!" << std::endl;
     }
   }
 

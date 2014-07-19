@@ -48,12 +48,18 @@ void FollowmeCtrl::starterCallback(const frmsg::starter_state::ConstPtr &p)
     if (p->state == frmsg::starter_state::FOLLOWME) {
         current_state_ = frmsg::followme_state::RUNNING;
         printf("Followme now start!\n");
+        printf("state: %d\n", current_state_);
         ros::Duration d(2.0);
         d.sleep();
 
+        ros::Duration delta(0.02);
         frmsg::followme_state ns;
-        ns.state = current_state_;
-        state_publisher_.publish(ns);
+        for (int i = 0; i < 5; i++) {
+            ns.header.stamp = ros::Time::now();
+            ns.state = current_state_;
+            state_publisher_.publish(ns);
+            delta.sleep();
+        }
     }
 }
 
