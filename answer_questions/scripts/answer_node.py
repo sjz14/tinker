@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-20, 03:00:46
+#  Last modified: 2014-07-20, 20:41:47
 # Description   : Answer question listed in resource/
 #
 
@@ -43,6 +43,12 @@ class answer_handler:
             return
 
         ques = str(data.data).strip()
+
+        # ping
+        if 'how are you tinker how are you tinker' == ques:
+            playSound('I hear you.')
+            return
+
         try:
             ans = ANS[ques.upper()]
         except:
