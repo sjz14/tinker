@@ -6,7 +6,7 @@
 
     <include file="$(find openni_pcl_grabber)/convert_img_to_cloud.launch" />
 
-    <node pkg="detecting_people" type="detecting_people" name="detecting_people">
+    <node pkg="detecting_people" type="detecting_people" name="detecting_people" output="screen">
     </node>
 
     <include file="$(find pocketsphinx)/furoc/starter/starter.launch" />
@@ -14,7 +14,7 @@
         <param name="task" value="followme" />
     </node>
 
-    <node pkg="followme_ctrl" type="followme_ctrl_node" name="followme_ctrl_node">
+    <node pkg="followme_ctrl" type="followme_ctrl_node" name="followme_ctrl_node" output="screen">
     </node>
 
 
