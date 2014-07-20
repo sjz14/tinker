@@ -45,10 +45,10 @@
  * In Proceedings of the International Conference on Intelligent Robots and Systems (IROS) 2012, Vilamoura (Portugal), 2012.
  */
 
-#include <opencv2/opencv.hpp>  
+#include <opencv2/opencv.hpp>
 #include <pcl/console/parse.h>
 #include <pcl/point_types.h>
-#include <pcl/visualization/pcl_visualizer.h>    
+#include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/io/openni_grabber.h>
 #include <pcl/sample_consensus/sac_model_plane.h>
 #include <pcl/people/ground_based_people_detection_app.h>
@@ -128,7 +128,7 @@ int histo_bin( float h, float s, float v )
   vd = MIN_cmp( (int)(v * NV / V_MAX), NV-1 );
   if( s < S_THRESH  ||  v < V_THRESH )
     return NH * NS + vd;
-  
+
   /* otherwise determine "colorful" bin */
   hd = MIN_cmp( (int)(h * NH / H_MAX), NH-1 );
   sd = MIN_cmp( (int)(s * NS / S_MAX), NS-1 );
@@ -220,7 +220,7 @@ histogram* calc_histogram( PointCloudT::Ptr& cloud )
   histo->n = NH*NS + NV;
   hist = histo->histo;
   memset( hist, 0, histo->n * sizeof(float) );
-  
+
   for( int i = 0; i < cloud->points.size(); i++ )
   {
     rgb2hsv( (int)cloud->points[i].r, (int)cloud->points[i].g, (int)cloud->points[i].b, h, s, v );
@@ -241,7 +241,7 @@ histogram* calc_histogram_a( PointCloudT::Ptr& cloud )
   histo->n = NH*NS + NV;
   hist = histo->histo;
   memset( hist, 0, histo->n * sizeof(float) );
-  
+
   for( int i = 0; i < cloud->points.size(); i++ )
   {
     rgb2hsv( (int)cloud->points[i].r, (int)cloud->points[i].g, (int)cloud->points[i].b, h, s, v );
@@ -264,7 +264,7 @@ float histo_dist_sq( histogram* h1, histogram* h2 )
 
   /*
     According the the Battacharyya similarity coefficient,
-    
+
     D = \sqrt{ 1 - \sum_1^n{ \sqrt{ h_1(i) * h_2(i) } } }
   */
   for( i = 0; i < n; i++ )
@@ -294,11 +294,11 @@ struct callback_args{
   PointCloudT::Ptr clicked_points_3d;
   pcl::visualization::PCLVisualizer::Ptr viewerPtr;
 };
-  
+
 void
 pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
 {
-  struct callback_args* data = (struct callback_args *)args;  
+  struct callback_args* data = (struct callback_args *)args;
   if (event.getPointIndex () == -1)
     return;
   PointT current_point;
@@ -359,7 +359,7 @@ int main (int argc, char** argv)
   float voxel_size = 0.06;
   Eigen::Matrix3f rgb_intrinsics_matrix;
   rgb_intrinsics_matrix << 525, 0.0, 319.5, 0.0, 525, 239.5, 0.0, 0.0, 1.0; // Kinect RGB camera intrinsics
-  
+
   // Read if some parameters are passed from command line:
   pcl::console::parse_argument (argc, argv, "--svm", svm_filename);
   pcl::console::parse_argument (argc, argv, "--conf", min_confidence);
@@ -393,8 +393,8 @@ int main (int argc, char** argv)
   // Spin until 'Q' is pressed:
   viewer.spin();
   std::cout << "done." << std::endl;
-  
-  //cloud_mutex.unlock ();    
+
+  //cloud_mutex.unlock ();
 
   // Ground plane estimation:
   Eigen::VectorXf ground_coeffs;
@@ -410,7 +410,7 @@ int main (int argc, char** argv)
   pcl::visualization::PCLVisualizer viewer("PCL Viewer");          // viewer initialization
   viewer.setCameraPosition(0,0,-2,0,-1,0,0);
 
-  // Create classifier for people detection:  
+  // Create classifier for people detection:
   pcl::people::PersonClassifier<pcl::RGB> person_classifier;
   person_classifier.loadSVMFromFile(svm_filename);   // load trained SVM
 
@@ -425,7 +425,7 @@ int main (int argc, char** argv)
   // For timing:
   static unsigned count = 0;
   static double last = pcl::getTime ();
-  
+
   int people_count = 0;
   histogram* first_hist;
 
@@ -573,7 +573,7 @@ int main (int argc, char** argv)
         }
         pub_people_.header.stamp = ros::Time::now();
         people_pub.publish(pub_people_);
-        
+
         std::cout << k << " people found" << std::endl;
         viewer.spinOnce();
         ros::spinOnce();
