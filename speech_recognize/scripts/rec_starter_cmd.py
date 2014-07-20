@@ -4,7 +4,7 @@
 # Project       : speech_recognize
 # Author        : bss
 # created by bss at 2014-07-16
-#  Last modified: 2014-07-16, 17:18:38
+#  Last modified: 2014-07-20, 04:36:06
 
 import sys
 import os
@@ -68,7 +68,7 @@ def callback(data):
     if 'tinker please follow me' == cmd:
         if '' == task or 'followme' == task:
             print(cmd)
-            playSound('Ok I will follow you.')
+            playSound('Ok, I will follow you.')
             state.state = starter_state.FOLLOWME
             publish_state(state)
         else:
