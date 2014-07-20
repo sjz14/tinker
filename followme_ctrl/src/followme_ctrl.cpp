@@ -8,7 +8,7 @@ FollowmeCtrl::FollowmeCtrl(ros::NodeHandle nh):
     ac_("move_base", true)
 {
     nodeInit();
-    // navigationInit();
+    navigationInit();
     people_stack_.clear();
 }
 
@@ -27,9 +27,12 @@ void FollowmeCtrl::nodeInit()
     state_publisher_ = nh_.advertise<frmsg::followme_state>(
         "followme_state", 5);
 
+<<<<<<< HEAD
+=======
     starter_subscriber_ = nh_.subscribe(
         "starter/cmd", 1, &FollowmeCtrl::starterCallback, this);
 
+>>>>>>> ea4cfd2fa099ff8b0d1c27cb9a1110c2cc8c7dc3
     people_pos_publisher_ = nh_.advertise<geometry_msgs::PoseArray>(
         "followme_people_pos", 5);
 }
@@ -39,6 +42,9 @@ void FollowmeCtrl::navigationInit()
     while (!ac_.waitForServer(ros::Duration(5.0))){
         printf("Waiting for the move_base action server to come up\n");
     }
+
+    // goal_publisher_ = nh_.advertise<geometry_msgs::Pose>(
+    //     "/move_base/current_goal", 5);
 }
 
 void FollowmeCtrl::starterCallback(const frmsg::starter_state::ConstPtr &p)
@@ -47,13 +53,29 @@ void FollowmeCtrl::starterCallback(const frmsg::starter_state::ConstPtr &p)
         return;
     if (p->state == frmsg::starter_state::FOLLOWME) {
         current_state_ = frmsg::followme_state::RUNNING;
-        printf("Followme now start!\n");
+<<<<<<< HEAD
+        ROS_INFO("Followme now start!");
         ros::Duration d(2.0);
         d.sleep();
 
         frmsg::followme_state ns;
         ns.state = current_state_;
         state_publisher_.publish(ns);
+=======
+        printf("Followme now start!\n");
+        printf("state: %d\n", current_state_);
+        ros::Duration d(2.0);
+        d.sleep();
+
+        ros::Duration delta(0.02);
+        frmsg::followme_state ns;
+        for (int i = 0; i < 5; i++) {
+            ns.header.stamp = ros::Time::now();
+            ns.state = current_state_;
+            state_publisher_.publish(ns);
+            delta.sleep();
+        }
+>>>>>>> ea4cfd2fa099ff8b0d1c27cb9a1110c2cc8c7dc3
     }
 }
 
@@ -70,10 +92,11 @@ void FollowmeCtrl::peopleCallback(const frmsg::people::ConstPtr &p)
 }
 
 void FollowmeCtrl::decide(const frmsg::people::ConstPtr &p)
+<<<<<<< HEAD
 {
     paintPeople(p);
     if (p->id < 0) {
-        printf("Alas? Where is the people\n");
+        ROS_INFO("Alas? Where is the people");
         return; // do nothing
     } else {
         double people_x = p->x[p->id];
@@ -82,7 +105,7 @@ void FollowmeCtrl::decide(const frmsg::people::ConstPtr &p)
         double w = 0;
 
         sendTarget(people_x, 0.5 * people_y, people_z, w);
-        printf("Yeah I see you\n");
+        ROS_INFO("Yeah I see you");
     }
 }
 
@@ -105,32 +128,98 @@ void FollowmeCtrl::paintPeople(const frmsg::people::ConstPtr &p)
 }
 
 void FollowmeCtrl::sendTarget(double x, double y, double z, double w)
+=======
+>>>>>>> ea4cfd2fa099ff8b0d1c27cb9a1110c2cc8c7dc3
 {
-    printf("target ---- x %lf y %lf z %lf w %lf\n", x, y, z, w);
-    // move_base_msgs::MoveBaseGoal goal;
+    paintPeople(p);
+    if (p->id < 0) {
+        printf("Alas? Where is the people\n");
+        return; // do nothing
+    } else {
+        double people_x = p->depth[p->id];
+        double people_y = -p->x[p->id];
+        double people_z = -p->y[p->id];
+        double ow = 1;
+        double oz = 0;
 
-    // //we'll send a goal to the robot to move 1 meter forward
-    // goal.target_pose.header.frame_id = "base_link";
-    // goal.target_pose.header.stamp = ros::Time::now();
+        people_x *= 0.5;
+        people_y *= 0.5;
 
-    // goal.target_pose.pose.position.x = x;
-    // goal.target_pose.pose.position.y = y;
-    // goal.target_pose.pose.position.z = z;
+        double theta = atan2(people_y, people_x);
+        oz = sin(theta * 0.5);
+        ow = cos(theta * 0.5);
 
-    // goal.target_pose.pose.orientation.w = w;
+        sendTarget(people_x, people_y, people_z, oz, ow);
+        printf("Yeah I see you\n");
+    }
+}
 
-    // ROS_INFO("Sending goal");
-    // ac_.sendGoal(goal);
+void FollowmeCtrl::paintPeople(const frmsg::people::ConstPtr &p)
+{
+    geometry_msgs::PoseArray::Ptr pose_array_msg;
+    pose_array_msg = boost::make_shared<geometry_msgs::PoseArray>();
+    for (int i = 0; i < p->x.size(); i++) {
+        geometry_msgs::Pose pose_msg;
+        pose_msg.position.x = p->depth[i];
+        pose_msg.position.y = -p->x[i];
+        pose_msg.position.z = -p->y[i];
+        pose_msg.orientation.x = 0;
+        pose_msg.orientation.y = 0;
+        pose_msg.orientation.z = 0;
+        pose_msg.orientation.w = 1;
+        pose_array_msg->poses.push_back(pose_msg);
+    }
+    pose_array_msg->header.frame_id = "base_link";
+    pose_array_msg->header.stamp = ros::Time::now();
+    people_pos_publisher_.publish(*pose_array_msg);
+}
 
-    // // not scientific: target should be refreshed continuously
-    // // to be changed!
+void FollowmeCtrl::sendTarget(double x, double y, double z, double oz, double ow)
+{
+    printf("target ---- x %lf y %lf z %lf oz %lf ow %lf\n", x, y, z, oz, ow);
+    move_base_msgs::MoveBaseGoal goal;
 
+    //we'll send a goal to the robot to move 1 meter forward
+    goal.target_pose.header.frame_id = "base_link";
+    goal.target_pose.header.stamp = ros::Time::now();
+
+    goal.target_pose.pose.position.x = x;
+    goal.target_pose.pose.position.y = y;
+    goal.target_pose.pose.position.z = z;
+
+<<<<<<< HEAD
+    goal.target_pose.pose.orientation.w = w;
+
+    ROS_INFO("Sending goal");
+=======
+    goal.target_pose.pose.orientation.x = 0;
+    goal.target_pose.pose.orientation.y = 0;
+    goal.target_pose.pose.orientation.z = oz;
+    goal.target_pose.pose.orientation.w = ow;
+
+    ROS_INFO("Sending goal");
+    // goal_publisher_.publish(goal);
+>>>>>>> ea4cfd2fa099ff8b0d1c27cb9a1110c2cc8c7dc3
+    ac_.sendGoal(goal);
+
+    // not scientific: target should be refreshed continuously
+    // to be changed!
+
+<<<<<<< HEAD
+    ac_.waitForResult();
+
+    if(ac_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        ROS_INFO("Hooray, the base moved 1 meter forward");
+    else
+        ROS_INFO("The base failed to move forward 1 meter for some reason");
+=======
     // ac_.waitForResult();
 
     // if(ac_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     //     ROS_INFO("Hooray, the base moved 1 meter forward");
     // else
     //     ROS_INFO("The base failed to move forward 1 meter for some reason");
+>>>>>>> ea4cfd2fa099ff8b0d1c27cb9a1110c2cc8c7dc3
 
-    // return;
+    return;
 }
