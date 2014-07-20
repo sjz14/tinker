@@ -437,8 +437,7 @@ int main (int argc, char** argv)
     {
       if ( cc_->ready_xyzrgb_ )    // if a new cloud is available
       {
-
-        std::cout << "In state 1!!!!!!!!!!" << std::endl;
+    //    std::cout << "In state 1!!!!!!!!!!" << std::endl;
 
         std::vector<float> x;
         std::vector<float> y;
