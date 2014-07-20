@@ -29,7 +29,7 @@ void InspectionCtrl::nodeInit()
     door_signal_publisher_ = nh_.advertise< std_msgs:: Int32 >(
         "door_signal", 5);
 
-    door_subscriber_ = nh_.subscribe("door_status", 5, &InspectionCtrl::doorDetectionCallback, this);
+    door_subscriber_ = nh_.subscribe("door_status", 5, &InspectionCtrl::doorDetectorCallback, this);
 }
 
 void InspectionCtrl::navigationInit()
@@ -39,7 +39,7 @@ void InspectionCtrl::navigationInit()
     }
 }
 
-void InspectionCtrl::doorDetectionCallback(const std_msgs::Int32::ConstPtr &p)
+void InspectionCtrl::doorDetectorCallback(const std_msgs::Int32::ConstPtr &p)
 {
     if (is_moving)
         return;
@@ -63,7 +63,7 @@ void InspectionCtrl::doorDetectionCallback(const std_msgs::Int32::ConstPtr &p)
 void InspectionCtrl::walk()
 {
     ros::Duration start_space(2.0);
-    d.sleep();
+    start_space.sleep();
 
     for (int i = 0; i < 3; i++) {
         move_base_msgs::MoveBaseGoal goal;
@@ -77,8 +77,8 @@ void InspectionCtrl::walk()
 
         goal.target_pose.pose.orientation.x = 0;
         goal.target_pose.pose.orientation.y = 0;
-        goal.target_pose.pose.orientation.z = oz;
-        goal.target_pose.pose.orientation.w = ow;
+        goal.target_pose.pose.orientation.z = tar_oz_[i];
+        goal.target_pose.pose.orientation.w = tar_ow_[i];
 
         printf("Sending goal");
         ac_.sendGoal(goal);

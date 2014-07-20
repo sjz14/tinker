@@ -109,7 +109,7 @@ include_directories( include ${catkin_INCLUDE_DIRS})
 # as an example, message headers may need to be generated before nodes
 # add_dependencies(inspection_ctrl_node inspection_ctrl_generate_messages_cpp)
 
-# add_dependencies(inspection_ctrl_node ${catikin_EXPORTED_TARGETS})
+add_dependencies(inspection_ctrl_node ${catkin_EXPORTED_TARGETS})
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(inspection_ctrl_node
 #   ${catkin_LIBRARIES}
