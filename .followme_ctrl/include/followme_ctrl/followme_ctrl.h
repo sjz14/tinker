@@ -28,7 +28,6 @@ private:
 
     ros::Publisher state_publisher_;
     ros::Publisher people_pos_publisher_;
-    ros::Publisher goal_publisher_;
 
     MoveBaseClient ac_;
 
@@ -41,7 +40,7 @@ private:
     void decide(const frmsg::people::ConstPtr &p);
 
     void paintPeople(const frmsg::people::ConstPtr &p);
-    void sendTarget(double x, double y, double z, double oz, double ow);
+    void sendTarget(double x, double y, double z, double w);
 
     int current_state_;
     std::deque< std::pair< double, double> > people_stack_;
