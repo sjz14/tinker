@@ -24,6 +24,6 @@
     <node pkg="parser" type="parser" name="parser">
     </node>
 
-    <node pkg="tinker_odom" type="tinker_dead_reckon_node" name="tinker_dead_reckon_node">
+    <node pkg="tinker_odom" type="tinker_odom_node2" name="tinker_odom_node2">
     </node>
 </launch>

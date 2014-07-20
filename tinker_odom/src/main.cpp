@@ -67,13 +67,13 @@ void opticCallback(const std_msgs::UInt8MultiArray::ConstPtr& msg)
     current_time = ros::Time::now();
     char buf[8];
     for (int i=0;i<8;i++)
-  	buf[i] = msg->data[i];
+    buf[i] = msg->data[i];
     Opt_Deltamove(buf,&dx,&dy,&dth);
     cout<<"dx"<<dx<<"dy"<<dy<<"dth"<<dth<<endl;
     double ddx=(1.414/2)*(dx-dy)/1000.0;
     double ddy=(1.414/2)*(dy+dx)/1000.0;
     th-=dth;
-    double dy2=ddx*cos(th) + ddy*sin(th);
+    double dy2=   ddx*cos(th) + ddy*sin(th);
     double dx2= - ddx*cos(th) + ddy*cos(th);
     x+=dx2;
     y+=dy2;
@@ -94,7 +94,7 @@ int main(int argc, char** argv){
   current_time = ros::Time::now();
   last_time = ros::Time::now();
 
-  ros::Rate r(20);
+  ros::Rate r(40);
   while(n.ok()){
 
     ros::spinOnce();               // check for incoming messages
