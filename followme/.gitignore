@@ -1,0 +1,6 @@
+devel/
+catkin/
+catkin_generated/
+CMakeFiles/
+bb_box.log
+CMakeCache.txt

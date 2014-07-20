@@ -4,7 +4,6 @@
 #include <sstream>
 #include <string>
 #include <math.h>
-#include "frmsg/dec.h"
 #define PI 3.1415926535
 ros::Publisher * p= NULL;
 void parserCallback(const geometry_msgs::Twist::ConstPtr& msg)
