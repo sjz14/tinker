@@ -48,6 +48,13 @@ ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
 )
 
+add_executable(hokuyo_node_bottom src/hokuyo_node2.cpp)
+add_dependencies(hokuyo_node_bottom ${PROJECT_NAME}_gencfg)
+target_link_libraries(hokuyo_node_bottom
+${catkin_LIBRARIES}
+  libhokuyo
+  ${Boost_LIBRARIES}
+)
 add_executable(getID src/getID.cpp)
 target_link_libraries(getID libhokuyo ${LOG4CXX_LIBRARY} ${catkin_LIBRARIES})
 

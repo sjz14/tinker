@@ -314,6 +314,7 @@ pp_callback (const pcl::visualization::PointPickingEvent& event, void* args)
 
 void stateCallback(const frmsg::followme_state::ConstPtr& state)
 {
+  printf("change state to something %d\n", state->state);
   if (current_state == state->state)
     return;
   current_state = state->state;
@@ -327,8 +328,8 @@ int main (int argc, char** argv)
   ros::NodeHandle nh;
   ros::Rate rate(13);
 
-  ros::Subscriber state_sub = nh.subscribe("followme_state", 100, &stateCallback);
-  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 100);
+  ros::Subscriber state_sub = nh.subscribe("followme_state", 5, &stateCallback);
+  ros::Publisher people_pub = nh.advertise<frmsg::people>("followme_people", 5);
   frmsg::people pub_people_;
 
   CloudConverter* cc_ = new CloudConverter();
@@ -432,11 +433,10 @@ int main (int argc, char** argv)
   // Main loop:
   while (!viewer.wasStopped() && ros::ok() )
   {
-    //if ( current_state == 1 )
+    if ( current_state == 1 )
     {
       if ( cc_->ready_xyzrgb_ )    // if a new cloud is available
       {
-
     //    std::cout << "In state 1!!!!!!!!!!" << std::endl;
 
         std::vector<float> x;
@@ -589,9 +589,11 @@ int main (int argc, char** argv)
         //cloud_mutex.unlock ();
       }
     }
-   // else
+    else
     {
-      //std::cout << "In state 0!!!!!!!!!" << std::endl;
+      viewer.spinOnce();
+      ros::spinOnce();
+      // std::cout << "In state 0!!!!!!!!!" << std::endl;
     }
   }
 

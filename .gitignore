@@ -2,3 +2,5 @@
 .*.swp
 facerec/archive/*
 facerec/archive(附件)
+.DS_Store
+*.DS_Store

@@ -7,7 +7,7 @@
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="badpoet@gmail.com">badpoet</maintainer>
+  <maintainer email="badpoet@todo.todo">badpoet</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -40,14 +40,28 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>std_msgs</build_depend>
   <build_depend>actionlib</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>frmsg</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+<<<<<<< HEAD
+  <build_depend>actionlib</build_depend>
+=======
+  <run_depend>actionlib</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>frmsg</run_depend>
+>>>>>>> ea4cfd2fa099ff8b0d1c27cb9a1110c2cc8c7dc3
   <run_depend>roscpp</run_depend>
+  <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
+<<<<<<< HEAD
   <run_depend>actionlib</run_depend>
   <build_depend>frmsg</build_depend>
   <run_depend>frmsg</run_depend>
+=======
+>>>>>>> ea4cfd2fa099ff8b0d1c27cb9a1110c2cc8c7dc3
 
 
   <!-- The export tag contains other, unspecified, tags -->

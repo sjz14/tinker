@@ -1,0 +1,16 @@
+<!-- Project      : tinker_launch -->
+<!-- File         : whatdidyousay.launch -->
+<!-- created by bss at 2014-07-19 -->
+<!-- Last modified: 2014-07-20, 01:38:59
+    !-->
+
+<launch>
+
+  <include file="$(find pocketsphinx)/furoc/starter/starter.launch" />
+
+  <node pkg="answer_questions" type="answer_node.py" name="answer_node" />
+
+  <node pkg="whatdidyousay" type="wdys_decide_node.py" name="whatdidyousay_node" />
+
+</launch>
+
