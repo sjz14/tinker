@@ -432,12 +432,12 @@ int main (int argc, char** argv)
   // Main loop:
   while (!viewer.wasStopped() && ros::ok() )
   {
-    if ( current_state == 1 )
+    //if ( current_state == 1 )
     {
       if ( cc_->ready_xyzrgb_ )    // if a new cloud is available
       {
 
-        std::cout << "In state 1!!!!!!!!!!" << std::endl;
+    //    std::cout << "In state 1!!!!!!!!!!" << std::endl;
 
         std::vector<float> x;
         std::vector<float> y;
@@ -589,9 +589,9 @@ int main (int argc, char** argv)
         //cloud_mutex.unlock ();
       }
     }
-    else
+   // else
     {
-      std::cout << "In state 0!!!!!!!!!" << std::endl;
+      //std::cout << "In state 0!!!!!!!!!" << std::endl;
     }
   }
 
