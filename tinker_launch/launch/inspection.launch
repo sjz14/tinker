@@ -1,0 +1,16 @@
+<launch>
+    
+    <param name="/use_sim_time" value="false" />
+
+    <node pkg="openni2_camera" type="openni2_camera_node" name="openni2_camera_node" output="screen" />
+
+    <include file="$(find openni_pcl_grabber)/convert_img_to_cloud.launch" />
+
+    <node pkg="detecting_door" type="detecting_door" name="detecting_door" output="screen">
+    </node>
+
+    <node pkg="inspection_ctrl" type="inspection_ctrl_node" name="inspection_ctrl_node" output="screen">
+    </node>
+
+
+</launch>

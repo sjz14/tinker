@@ -1,17 +1,19 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(inspection_ctrl)
+project(detecting_door)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
   roscpp
-  rospy
   std_msgs
-  actionlib
+  pcl_ros
+  pcl_conversions
+  reading_pointcloud
+  frmsg
 )
-
+find_package(OpenCV)
+find_package(PCL 1.7 REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -69,7 +71,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs#   std_msgs
+#   std_msgs
 # )
 
 ###################################
@@ -83,9 +85,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES inspection_ctrl
-  CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs
-  DEPENDS system_lib
+#  LIBRARIES detecting_door
+#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  DEPENDS system_lib
 )
 
 ###########
@@ -94,24 +96,33 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
-include_directories( include ${catkin_INCLUDE_DIRS})
-
+include_directories(include)
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
+  ${reading_pointcloud_INCLUDE_DIRS}
+)
+link_directories(
+  ${PCL_LIBRARY_DIRS}
+)
+add_definitions(${PCL_DEFINITIONS})
+add_executable(detecting_door src/detecting_door.cpp)
+target_link_libraries(detecting_door ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 ## Declare a cpp library
-# add_library(inspection_ctrl
-#   src/${PROJECT_NAME}/inspection_ctrl.cpp
+# add_library(detecting_door
+#   src/${PROJECT_NAME}/detecting_door.cpp
 # )
 
 ## Declare a cpp executable
- add_executable(inspection_ctrl_node src/inspection_ctrl_node.cpp src/inspection_ctrl.cpp)
+# add_executable(detecting_door_node src/detecting_door_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
-# as an example, message headers may need to be generated before nodes
-# add_dependencies(inspection_ctrl_node inspection_ctrl_generate_messages_cpp)
+## as an example, message headers may need to be generated before nodes
+# add_dependencies(detecting_door_node detecting_door_generate_messages_cpp)
 
-# add_dependencies(inspection_ctrl_node ${catikin_EXPORTED_TARGETS})
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(inspection_ctrl_node
+# target_link_libraries(detecting_door_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -130,7 +141,7 @@ include_directories( include ${catkin_INCLUDE_DIRS})
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS inspection_ctrl inspection_ctrl_node
+# install(TARGETS detecting_door detecting_door_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -155,7 +166,7 @@ include_directories( include ${catkin_INCLUDE_DIRS})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_inspection_ctrl.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_detecting_door.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

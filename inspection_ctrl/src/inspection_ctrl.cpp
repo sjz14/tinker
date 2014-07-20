@@ -4,10 +4,17 @@
 
 InspectionCtrl::InspectionCtrl(ros::NodeHandle nh):
     nh_(nh),
-    ac_("move_base", true)
+    ac_("move_base", true),
+    is_moving(0),
+    open_count(0)
 {
     nodeInit();
     navigationInit();
+
+    std_msgs::Int32 start_msg;
+    start_msg.data = 1;
+    for (int i = 0; i < 5; i++)
+        door_signal_publisher_.publish(start_msg);
 }
 
 InspectionCtrl::~InspectionCtrl()
@@ -34,12 +41,22 @@ void InspectionCtrl::navigationInit()
 
 void InspectionCtrl::doorDetectionCallback(const std_msgs::Int32::ConstPtr &p)
 {
+    if (is_moving)
+        return;
     if (p->data == 1) {
+        open_count += 1;
+        printf("open\n");
+        if (open_count < OPEN_THRES)
+            return;
+        printf("move move!\n");
+        is_moving = 1;
         std_msgs::Int32 stop_msg;
-        stop_msg.data = 0;
+        stop_msg.data = 2;
         for (int i = 0; i < 5; i++)
             door_signal_publisher_.publish(stop_msg);
         walk();
+    } else {
+        open_count = 0;
     }
 }
 
