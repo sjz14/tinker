@@ -1,7 +1,7 @@
 // Project:     serial
 // File:        arm.cpp
 // Created by bss at 2014-07-21
-// Last modified: 2014-07-21, 22:40:52
+// Last modified: 2014-07-21, 23:08:58
 // Description:
 ///edited by xf 2014-1-18
 //
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     cout<<"serial_arm"<<endl;
     ros::init(argc, argv, "serialport_arm_driver");
     ros::NodeHandle n;
-    ros::Rate rate(40);
+    ros::Rate rate(1000);
     std::string package_path = ros::package::getPath("serial") + "/";
     QSettings settings((package_path + "arm.ini").c_str(),QSettings::IniFormat);
     int pos = settings.value("pos", 1).toInt();
@@ -97,13 +97,6 @@ int main(int argc, char** argv)
         ss<<dev.toStdString().c_str();
 
     }
-    //cout<<"serialport:"<<ss.str()<<endl;
-    //my_serial_port = new SerialPort(ss.str());
-    //std::cout<<my_serial_port->IsOpen()<<std::endl;
-    //my_serial_port->Open();
-
-    //std::cout<<my_serial_port->IsOpen()<<std::endl;
-    //my_serial_port->SetBaudRate(SerialPort::BAUD_9600);
 
     if (!my_serial_stream)
     {
@@ -111,7 +104,7 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    my_serial_stream.SetBaudRate( SerialStreamBuf::BAUD_57600) ;
+    my_serial_stream.SetBaudRate( SerialStreamBuf::BAUD_9600) ;
     std_msgs::String msg2;
     ros::Subscriber sub = n.subscribe("order_arm",1000,orderCallback);
 
@@ -132,7 +125,7 @@ int main(int argc, char** argv)
 	fclose(f1);
 
     unsigned char data[16];
-    ros::Rate loop_rate(1);
+    ros::Rate loop_rate(1000);
     int speed, sum;
     int lastpos[3];
     int repflag = 0;
@@ -160,12 +153,17 @@ int main(int argc, char** argv)
             data[10]=sum & 0xff;
             data[10]=~(data[10]);
 
-
+            
             //comm1.put_Output(COleVariant(data));
             for (int i = 0; i <= 10; i++)
             {
                 my_serial_stream << data[i];
+                std::cout<<std::hex<<(int)data[i]<<" ";
             }
+            std::cout<<"endl";
+            char ch;
+            std::cin>>ch;
+            printf("one\n");
             repflag++;
             
             loop_rate.sleep();
