@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-22, 05:12:51
+#  Last modified: 2014-07-22, 05:38:53
 # Description   : Answer question listed in resource/
 #
 
@@ -66,6 +66,13 @@ class answer_handler:
         except rospy.ServiceException, e:
             print("Service call failed: %s"%e)
 
+        #stop recognizer
+        try:
+            stop_pock = rospy.ServiceProxy('/recognizer/stop', Empty)
+            stop_pock()
+        except rospy.ServiceException, e:
+            print("Service call failed: %s"%e)
+
         playSound('Your question is:')
         playSound(ques)
         playSound('My answer is:')
@@ -78,6 +85,14 @@ class answer_handler:
             playSound('Please continue.')
         else:
             playSound('Thank you for your questions. Goodbye.')
+
+        #start recognizer
+        try:
+            start_pock = rospy.ServiceProxy('/recognizer/start', Empty)
+            start_pock()
+        except rospy.ServiceException, e:
+            print("Service call failed: %s"%e)
+
 
 def Usage():
     print('answer_node.py usage:')
