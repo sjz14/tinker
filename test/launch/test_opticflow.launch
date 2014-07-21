@@ -1,6 +1,6 @@
 <launch>
 <node pkg = "serial" type = "serial_node" name = "serial_node" />
-<node pkg = "tinker_odom" type = "tinker_odom_node2" name = "tinker_odom_node2" output = "screen" />
+<node pkg = "tinker_odom" type = "tinker_odom_node3" name = "tinker_odom_node3" output = "screen" />
     <arg name="gui" default="False" />
     <param name="robot_description" textfile="$(find tinker_2dnav)/tinker.urdf" /> 
     <param name="use_gui" value="$(arg gui)"/>

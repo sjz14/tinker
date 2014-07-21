@@ -111,9 +111,9 @@ include_directories( include ${catkin_INCLUDE_DIRS})
 
 add_dependencies(inspection_ctrl_node ${catkin_EXPORTED_TARGETS})
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(inspection_ctrl_node
-#   ${catkin_LIBRARIES}
-# )
+ target_link_libraries(inspection_ctrl_node
+   ${catkin_LIBRARIES}
+ )
 
 #############
 ## Install ##

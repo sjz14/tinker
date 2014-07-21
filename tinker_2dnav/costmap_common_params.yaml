@@ -5,7 +5,7 @@ footprint: [[-0.20, -0.20], [-0.20, 0.20], [0.20, 0.20], [0.31, 0.0], [0.20,    
 footprint_padding: 0.01
 
 
-inflation_radius: 0.35
+inflation_radius: 0.25
 
 transform_tolerance: 0.8
 
