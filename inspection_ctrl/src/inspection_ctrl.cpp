@@ -1,6 +1,7 @@
 #include <inspection_ctrl/inspection_ctrl.h>
 #include <ros/time.h>
 #include <ros/duration.h>
+#include <string>
 
 InspectionCtrl::InspectionCtrl(ros::NodeHandle nh):
     nh_(nh),
@@ -86,8 +87,11 @@ void InspectionCtrl::pathInit()
 
 void InspectionCtrl::nodeInit()
 {
-    door_signal_publisher_ = nh_.advertise< std_msgs:: Int32 >(
+    door_signal_publisher_ = nh_.advertise< std_msgs::Int32 >(
         "door_signal", 5);
+
+    say_publisher_ = nh.advertise< std_msgs::String >(
+        "say", 5);
 
     door_subscriber_ = nh_.subscribe("door_status", 5, &InspectionCtrl::doorDetectorCallback, this);
 }
@@ -120,12 +124,20 @@ void InspectionCtrl::doorDetectorCallback(const std_msgs::Int32::ConstPtr &p)
     }
 }
 
+void InspectionCtrl::speak()
+{
+    std::string sentence("Hello, I am tinker\n");
+    std_msgs::String msg;
+    msg.data = sentence;
+    say_publisher_.publish(msg);
+}
+
 void InspectionCtrl::walk()
 {
-    ros::Duration start_space(2.0);
+    ros::Duration start_space(6.0);
     start_space.sleep();
 
-    for (int i = 0; i < path_len; i++) {
+    for (int i = 1; i < path_len; i++) {
         move_base_msgs::MoveBaseGoal goal;
 
         goal.target_pose.header.frame_id = "map";
@@ -148,6 +160,10 @@ void InspectionCtrl::walk()
             printf("Hooray, the base moved to the target");
         else
             printf("The base failed to move to the target");
+
+        if (i == 5) {
+            speak();
+        }
 
     }
 }

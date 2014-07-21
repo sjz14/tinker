@@ -5,8 +5,9 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <std_msgs/Int32.h>
 
-int current_signal = 0;
+int current_signal = 1;
 
 void signalCallback(const std_msgs::Int32::ConstPtr& signal)
 {
@@ -21,6 +22,7 @@ int main ( int argc, char** argv)
   ros::init(argc, argv, "detecting_door");
   ros::NodeHandle nh;
   ros::Rate rate(13);
+  printf("detecting door launching...\n");
 
     ros::Subscriber door_signal = nh.subscribe("door_signal", 100, &signalCallback);
   ros::Publisher door_status = nh.advertise<std_msgs::Int32>("door_status", 100);
@@ -28,8 +30,10 @@ int main ( int argc, char** argv)
 
   CloudConverter* cc_ = new CloudConverter();
 
+  printf("here\n");
   while (!cc_->ready_xyzrgb_)
   {
+    printf("Waiting for cloud converter\n");
     ros::spinOnce();
     rate.sleep();
     if (!ros::ok())
@@ -38,6 +42,7 @@ int main ( int argc, char** argv)
       return -1;
     }
   }
+  printf("there\n");
 
   pcl::visualization::PCLVisualizer viewer("PCL Viewer");          // viewer initialization
     viewer.setCameraPosition(0,0,-2,0,-1,0,0);

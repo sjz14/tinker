@@ -7,8 +7,7 @@ footprint_padding: 0.01
 
 inflation_radius: 0.25
 
-transform_tolerance: 0.8
-
+transform_tolerance: 0.4
 
 observation_sources: laser_scan_bottom
 

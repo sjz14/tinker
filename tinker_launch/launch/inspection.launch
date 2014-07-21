@@ -2,6 +2,9 @@
     
     <param name="/use_sim_time" value="false" />
 
+    <node pkg="say" type="say.py" name="say.py">
+    </node>
+    
     <node pkg="openni2_camera" type="openni2_camera_node" name="openni2_camera_node" output="screen" />
 
     <include file="$(find openni_pcl_grabber)/convert_img_to_cloud.launch" />
