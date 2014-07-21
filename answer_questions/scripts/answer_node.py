@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-22, 05:38:53
+#  Last modified: 2014-07-22, 06:44:24
 # Description   : Answer question listed in resource/
 #
 
@@ -101,9 +101,7 @@ def Usage():
     print('-i: no num limit.')
 
 def playSound(answer):
-    msg = String()
-    msg.data = str(answer)
-    say_pub.publish(msg)
+    say_pub.publish(answer)
 
 def main(argv):
     try:

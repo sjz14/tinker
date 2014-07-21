@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-07-19
-#  Last modified: 2014-07-20, 02:11:01
+#  Last modified: 2014-07-22, 06:44:33
 # Description   : Decision node of WhatDidYouSay.
 #
 
@@ -12,8 +12,11 @@ import os
 import rospkg
 import rospy
 from std_msgs.msg import String
+from std_msgs.msg import Int32
 from std_srvs.srv import *
 
+
+fin_pub = rospy.Publisher('/answer/finished', Int32)
 
 class answer_handler:
     def __init__(self):
@@ -24,7 +27,14 @@ class answer_handler:
         if self.answer_num >= 3:
             print('answered 3 questions.')
             stop_answer()
+            fin_pub.publish(1)
         return EmptyResponse()
+
+def initCb(data):
+    print('/answer/init is ' + str(data.data))
+    if data.data == 1:
+        # start answer question
+        start_answer()
 
 def stop_answer():
     print('stopping')
@@ -33,6 +43,16 @@ def stop_answer():
         stop()
     except rospy.ServiceException, e:
         print("Service call failed: %s"%e)
+
+def start_answer():
+    print('starting')
+    rospy.wait_for_service('/answer/start')
+    try:
+        start = rospy.ServiceProxy('/answer/start', Empty)
+        start()
+    except rospy.ServiceException, e:
+        print("Service call failed: %s"%e)
+
 
 def playSound(answer):
     mp3dir = rospkg.RosPack().get_path('whatdidyousay') + '/resource/sounds/'
@@ -48,18 +68,14 @@ def main(argv):
     rospy.init_node('answer_node', anonymous=True)
     rospy.on_shutdown(stop_answer)
 
+    # the robot don't have the ability to find people.
     playSound("I can't find you. Please come to me.")
 
-    print('starting')
-    rospy.wait_for_service('/answer/start')
-    try:
-        stop = rospy.ServiceProxy('/answer/start', Empty)
-        stop()
-    except rospy.ServiceException, e:
-        print("Service call failed: %s"%e)
-
     ah = answer_handler()
+    # from answer_questions
     rospy.Service("/answer/answer_once", Empty, ah.answer_once)
+    # wait until robot is in position
+    rospy.Subscriber('/answer/init', Int32, initCb)
 
     rospy.spin()
 
