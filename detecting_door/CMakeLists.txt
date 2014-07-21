@@ -1,18 +1,19 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(tinker_odom)
+project(detecting_door)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  nav_msgs
   roscpp
-  serial
   std_msgs
-  tf
+  pcl_ros
+  pcl_conversions
+  reading_pointcloud
+  frmsg
 )
-
+find_package(OpenCV)
+find_package(PCL 1.7 REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -70,7 +71,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs#   nav_msgs#   std_msgs
+#   std_msgs
 # )
 
 ###################################
@@ -83,9 +84,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tinker_odom
-#  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp serial std_msgs tf
+  INCLUDE_DIRS include
+#  LIBRARIES detecting_door
+#  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -95,41 +96,36 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
+  ${reading_pointcloud_INCLUDE_DIRS}
 )
-
+link_directories(
+  ${PCL_LIBRARY_DIRS}
+)
+add_definitions(${PCL_DEFINITIONS})
+add_executable(detecting_door src/detecting_door.cpp)
+target_link_libraries(detecting_door ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 ## Declare a cpp library
-# add_library(tinker_odom
-#   src/${PROJECT_NAME}/tinker_odom.cpp
+# add_library(detecting_door
+#   src/${PROJECT_NAME}/detecting_door.cpp
 # )
 
 ## Declare a cpp executable
+# add_executable(detecting_door_node src/detecting_door_node.cpp)
 
-add_executable(tinker_odom_node src/main.cpp)
-add_executable(tinker_dead_reckon_node src/dr.cpp)
-add_executable(tinker_odom_node2 src/main2.cpp)
-
-add_executable(tinker_odom_node3 src/main3.cpp)
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(tinker_odom_node tinker_odom_generate_messages_cpp)
+# add_dependencies(detecting_door_node detecting_door_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(tinker_odom_node
-   ${catkin_LIBRARIES}
- )
+# target_link_libraries(detecting_door_node
+#   ${catkin_LIBRARIES}
+# )
 
-target_link_libraries(tinker_odom_node2
-   ${catkin_LIBRARIES}
- )
-target_link_libraries(tinker_odom_node3
-   ${catkin_LIBRARIES}
- )
-target_link_libraries(tinker_dead_reckon_node
-   ${catkin_LIBRARIES}
- )
 #############
 ## Install ##
 #############
@@ -145,7 +141,7 @@ target_link_libraries(tinker_dead_reckon_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS tinker_odom tinker_odom_node
+# install(TARGETS detecting_door detecting_door_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -170,7 +166,7 @@ target_link_libraries(tinker_dead_reckon_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_tinker_odom.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_detecting_door.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

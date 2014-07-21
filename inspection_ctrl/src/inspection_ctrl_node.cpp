@@ -1,4 +1,5 @@
 #include <inspection_ctrl/inspection_ctrl.h>
+#include <ros/ros.h>
 
 int main(int argc, char **argv)
 {
