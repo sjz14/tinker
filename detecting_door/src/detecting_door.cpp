@@ -46,6 +46,7 @@ int main ( int argc, char** argv)
   {
     if ( current_signal == 1 )
     {
+      printf("detecting...\n");
       if ( cc_->ready_xyzrgb_)
         {
           pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud = cc_->msg_xyzrgb_;
@@ -79,14 +80,15 @@ int main ( int argc, char** argv)
             }
           door_status.publish(door_status_pub);
         }
-      }
         ros::spinOnce();
         viewer.spinOnce();
   } else if (current_signal == 0) {
+      printf("not started...\n")
         ros::spinOnce();
         viewer.spinOnce();
     } else {
         break;
     }
+  }
 
 }
