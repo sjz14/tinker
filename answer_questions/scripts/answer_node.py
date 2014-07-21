@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-21, 23:26:12
+#  Last modified: 2014-07-22, 05:12:51
 # Description   : Answer question listed in resource/
 #
 
@@ -39,9 +39,10 @@ class answer_handler:
         return EmptyResponse()
 
     def getQuestionCallback(self, data):
-        if not self.allow:
-            print('job stopped.')
-            return
+        if not self.force_allow:
+            if not self.allow:
+                print('job stopped.')
+                return
 
         ques = str(data.data).strip()
 
@@ -67,7 +68,6 @@ class answer_handler:
 
         playSound('Your question is:')
         playSound(ques)
-        time.sleep(0.5)
         playSound('My answer is:')
         playSound(ans)
         
@@ -78,7 +78,6 @@ class answer_handler:
             playSound('Please continue.')
         else:
             playSound('Thank you for your questions. Goodbye.')
-        time.sleep(0.5)
 
 def Usage():
     print('answer_node.py usage:')
