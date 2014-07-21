@@ -1,7 +1,7 @@
 // Project      : openni_pcl_grabber
 // File         : send_cloud.cpp
 // Creation Date: 2014-07-11
-// Last modified: 2014-07-11, 23:44:45
+// Last modified: 2014-07-22, 00:42:10
 // Description  : 转发 openni 中提取的 pcl 到 ros
 // 
 
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     }
     //cloud_mutex.lock();     // for not overwriting the point cloud
 
-    ros::Rate loop_rate(4);
+    ros::Rate loop_rate(40);
     while (nh.ok())
     {
         ros::Time scan_time = ros::Time::now();
