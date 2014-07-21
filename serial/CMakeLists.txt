@@ -108,6 +108,7 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(serial_node src/main.cpp)
+add_executable(serial_arm_node src/arm.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -118,6 +119,13 @@ add_executable(serial_node src/main.cpp)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(serial_node
+    ${Qt4_LIBRARIES}
+    ${QT_LIBRARIES}
+    ${catkin_LIBRARIES}
+    "/usr/lib/libserial.so"
+)
+
+target_link_libraries(serial_arm_node
     ${Qt4_LIBRARIES}
     ${QT_LIBRARIES}
     ${catkin_LIBRARIES}

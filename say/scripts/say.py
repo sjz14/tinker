@@ -3,8 +3,8 @@
 # File          : say.py
 # Author        : bss
 # Creation date : 2014-07-21
-#  Last modified: 2014-07-21, 21:17:19
-# Description   : 
+#  Last modified: 2014-07-22, 00:00:49
+# Description   : say something through loudspeaker.
 #
 
 import sys
@@ -22,17 +22,21 @@ def getSpeechCallback(data):
 def Usage():
     print('say.py usage:')
     print('speak')
+    print('ros topic: /say')
 
 
-def playSound(sentense):
-    os.system("espeak -s 130 --stdout '" + sentense + "' | aplay")
+def playSound(sent):
+    mp3dir = rospkg.RosPack().get_path('say') + '/resource/sounds/'
+    if os.path.exists(mp3dir + sent + '.mp3'):
+        os.system('mplayer "' + mp3dir + sent + '.mp3"')
+    else:
+        sent_speak = sent.replace("'", '')
+        os.system("espeak -s 130 --stdout '" + sent_speak + "' | aplay")
 
 def main(argv):
-    rcdir = rospkg.RosPack().get_path('say') + '/resource/'
     # Listen to /say
     rospy.init_node('say_node', anonymous=True)
     rospy.Subscriber('/say', String, getSpeechCallback)
-    print('say ok.')
     rospy.spin()
 
 if __name__ == '__main__':
