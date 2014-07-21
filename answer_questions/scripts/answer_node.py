@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-20, 20:41:47
+#  Last modified: 2014-07-21, 23:26:12
 # Description   : Answer question listed in resource/
 #
 
@@ -17,6 +17,7 @@ from std_msgs.msg import String
 from std_srvs.srv import *
 
 ANS = {}
+say_pub = rospy.Publisher('/say', String)
 
 class answer_handler:
     def __init__(self):
@@ -86,12 +87,9 @@ def Usage():
     print('-i: no num limit.')
 
 def playSound(answer):
-    mp3dir = rospkg.RosPack().get_path('answer_questions') + '/resource/sounds/'
-    if os.path.exists(mp3dir + answer + '.mp3'):
-        os.system('mplayer "' + mp3dir + answer + '.mp3"')
-    else:
-        ans_speak = answer.replace("'", '')
-        os.system("espeak -s 130 --stdout '" + ans_speak + "' | aplay")
+    msg = String()
+    msg.data = str(answer)
+    say_pub.publish(msg)
 
 def main(argv):
     try:
