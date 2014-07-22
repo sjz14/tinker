@@ -93,6 +93,7 @@ class answer_handler:
             playSound('Please continue.')
         else:
             playSound('Thank you for your questions. Goodbye.')
+            playSound('See you next year!')
 
         #start recognizer
         try:
