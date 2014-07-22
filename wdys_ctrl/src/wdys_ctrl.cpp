@@ -40,7 +40,7 @@ void WdysCtrl::nodeInit()
     answer_init_publisher_ = nh_.advertise< std_msgs::Int32 >(
         "/answer/init", 5);
 
-    cmd_vel_publisher_ = nh_.advertise< geometry_msgs::Twist > ("cmd_vel", 5);
+    cmd_vel_publisher_ = nh_.advertise< geometry_msgs::Twist > ("/cmd_vel", 5);
 }
 
 void WdysCtrl::answerFinishedCallback(const std_msgs::Int32::ConstPtr &p)
@@ -91,7 +91,7 @@ void WdysCtrl::walk()
     start_space.sleep();
 
     geometry_msgs::Twist msg;
-    msg.linear.x = 0.5;
+    msg.linear.x = 0.3;
     cmd_vel_publisher_.publish(msg);
     ros::Duration moving(3.0);
     moving.sleep();

@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-22, 06:44:24
+#  Last modified: 2014-07-22, 20:34:18
 # Description   : Answer question listed in resource/
 #
 
@@ -59,7 +59,7 @@ class answer_handler:
             sys.exit(1)
         print(ques + '?')
         print('-' + ans)
-    
+
         try:
             answer_once = rospy.ServiceProxy('/answer/answer_once', Empty)
             answer_once()
@@ -76,8 +76,16 @@ class answer_handler:
         playSound('Your question is:')
         playSound(ques)
         playSound('My answer is:')
-        playSound(ans)
-        
+        if ques == 'what time is it':
+            hour = int(time.strftime('%H'))
+            hour = (hour + 1) % 12
+            minute = int(time.strftime('%M'))
+            ans = str(hour) + ' ' + str(minute)
+            print(ans)
+            playSound(ans)
+        else:
+            playSound(ans)
+
         self.count += 1
         if self.count >= 3:
             self.allow = False
@@ -140,11 +148,11 @@ def main(argv):
         if sentence != '':
             ans.append(str(sentence))
     fp.close()
-    
+
     for i in range(0, min(len(ques), len(ans))):
         ANS[ques[i]] = ans[i]
     print(str(len(ANS)) + ' q&a find.')
-    
+
     ah.stop(None)
 
     # Listen to /recognizer/output from pocketsphinx, task:answer

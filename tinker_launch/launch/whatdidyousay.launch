@@ -6,7 +6,7 @@
 
 <launch>
 
-  <include file="$(find pocketsphinx)/furoc/starter/starter.launch" />
+  <!-- <include file="$(find pocketsphinx)/furoc/starter/starter.launch" /> -->
 
   <node pkg="answer_questions" type="answer_node.py" name="answer_node" />
 

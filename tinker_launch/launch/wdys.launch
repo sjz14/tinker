@@ -1,6 +1,12 @@
 <launch>
     <param name="/use_sim_time" value="false" />
 
+    <node pkg="serial" type="serial_node" name="serial_node">
+    </node>
+
+    <node pkg="parser" type="parser" name="parser">
+    </node>
+
     <node pkg="say" type="say.py" name="say">
     </node>
     <node pkg="openni2_camera" type="openni2_camera_node" name="openni2_camera_node" output="screen" />
@@ -13,6 +19,6 @@
 
     <node pkg="wdys_ctrl" type="wdys_ctrl_node" name="wdys_ctrl_node" output="screen">
     </node>
-
+    
 
 </launch>

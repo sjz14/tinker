@@ -11,6 +11,7 @@ import sys
 import os
 import rospkg
 import rospy
+import time
 from std_msgs.msg import String
 from std_msgs.msg import Int32
 from std_srvs.srv import *
@@ -25,6 +26,7 @@ class answer_handler:
         # stop when answered 3 questions
         self.answer_num += 1
         if self.answer_num >= 3:
+            time.sleep(14)
             print('answered 3 questions.')
             stop_answer()
             fin_pub.publish(1)
@@ -33,6 +35,8 @@ class answer_handler:
 def initCb(data):
     print('/answer/init is ' + str(data.data))
     if data.data == 1:
+        # the robot don't have the ability to find people.
+        playSound("I can't find you. Please come to me.")
         # start answer question
         start_answer()
 
@@ -64,12 +68,9 @@ def playSound(answer):
 
 def main(argv):
     pkgdir = rospkg.RosPack().get_path('whatdidyousay')
-    
+
     rospy.init_node('answer_node', anonymous=True)
     rospy.on_shutdown(stop_answer)
-
-    # the robot don't have the ability to find people.
-    playSound("I can't find you. Please come to me.")
 
     ah = answer_handler()
     # from answer_questions
