@@ -2,7 +2,7 @@
   <master auto="start"/>
 
   <!-- Run the map server -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find tinker_2dnav)/arena1.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find tinker_2dnav)/409.yaml"/>
 
   <!--- Run AMCL -->
   <include file="$(find tinker_2dnav)/launch/amcl_omni.launch" />
@@ -14,5 +14,6 @@
     <rosparam file="$(find tinker_2dnav)/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find tinker_2dnav)/base_local_planner_params.yaml" command="load" />
     <param name="controller_frequency" value="10.0" />
+    <rosparam param="recovery_behaviors">[  {name: aggressive_reset, type: clear_costmap_recovery/ClearCostmapRecovery}]</rosparam>
   </node>
 </launch>
