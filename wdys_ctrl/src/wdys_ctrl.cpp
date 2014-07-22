@@ -1,158 +1,107 @@
-#include <followme_ctrl/followme_ctrl.h>
+#include <wdys_ctrl/wdys_ctrl.h>
 #include <ros/time.h>
 #include <ros/duration.h>
+#include <string>
 
-FollowmeCtrl::FollowmeCtrl(ros::NodeHandle nh):
+WdysCtrl::WdysCtrl(ros::NodeHandle nh):
     nh_(nh),
-    current_state_(frmsg::followme_state::NOTSTART),
-    ac_("move_base", true)
+    is_moving(0),
+    is_backing(0),
+    open_count(0)
 {
     nodeInit();
-    navigationInit();
-    people_stack_.clear();
+
+    std_msgs::Int32 start_msg;
+    start_msg.data = 1;
+    for (int i = 0; i < 5; i++)
+        door_signal_publisher_.publish(start_msg);
+
+    printf("WdysCtrl Ready!\n");
 }
 
-FollowmeCtrl::~FollowmeCtrl()
+WdysCtrl::~WdysCtrl()
 {
     // nothing
 }
 
-void FollowmeCtrl::nodeInit()
+void WdysCtrl::nodeInit()
 {
-    printf("Followme Controller set up\n");
+    door_signal_publisher_ = nh_.advertise< std_msgs::Int32 >(
+        "door_signal", 5);
 
-    people_subscriber_ = nh_.subscribe(
-        "followme_people", 1, &FollowmeCtrl::peopleCallback, this);
+    say_publisher_ = nh_.advertise< std_msgs::String >(
+        "say", 5);
 
-    state_publisher_ = nh_.advertise<frmsg::followme_state>(
-        "followme_state", 5);
+    door_subscriber_ = nh_.subscribe("door_status", 5, &WdysCtrl::doorDetectorCallback, this);
 
-    starter_subscriber_ = nh_.subscribe(
-        "starter/cmd", 1, &FollowmeCtrl::starterCallback, this);
+    answer_finished_subscriber_ = nh_.subscribe(
+            "/answer/finished", 5, &WdysCtrl::answerFinishedCallback, this);
 
-    people_pos_publisher_ = nh_.advertise<geometry_msgs::PoseArray>(
-        "followme_people_pos", 5);
+    answer_init_publisher_ = nh_.advertise< std_msgs::Int32 >(
+        "/answer/init", 5);
+
+    cmd_vel_publisher_ = nh_.advertise< geometry_msgs::Twist > ("cmd_vel", 5);
 }
 
-void FollowmeCtrl::navigationInit()
+void WdysCtrl::answerFinishedCallback(const std_msgs::Int32::ConstPtr &p)
 {
-    while (!ac_.waitForServer(ros::Duration(5.0))){
-        printf("Waiting for the move_base action server to come up\n");
-    }
-
-    // goal_publisher_ = nh_.advertise<geometry_msgs::Pose>(
-    //     "/move_base/current_goal", 5);
+    if (p->data != 1) return;
+    if (is_backing) return;
+    is_backing = 1;
+    // say goodbye
+    geometry_msgs::Twist bak;
+    bak.linear.x = -1;
+    cmd_vel_publisher_.publish(bak);
+    ros::Duration(3.0).sleep();
+    bak.linear.x = 0;
+    cmd_vel_publisher_.publish(bak);
 }
 
-void FollowmeCtrl::starterCallback(const frmsg::starter_state::ConstPtr &p)
+void WdysCtrl::doorDetectorCallback(const std_msgs::Int32::ConstPtr &p)
 {
-    if (current_state_ != frmsg::followme_state::NOTSTART)
+    if (is_moving)
         return;
-    if (p->state == frmsg::starter_state::FOLLOWME) {
-        current_state_ = frmsg::followme_state::RUNNING;
-        printf("Followme now start!\n");
-        printf("state: %d\n", current_state_);
-        ros::Duration d(2.0);
-        d.sleep();
-
-        ros::Duration delta(0.02);
-        frmsg::followme_state ns;
-        for (int i = 0; i < 5; i++) {
-            ns.header.stamp = ros::Time::now();
-            ns.state = current_state_;
-            state_publisher_.publish(ns);
-            delta.sleep();
-        }
-    }
-}
-
-void FollowmeCtrl::peopleCallback(const frmsg::people::ConstPtr &p)
-{
-    using namespace std;
-
-    // if (people_stack_.size() > 10)
-    //     people_stack_.pop_front();
-    // people_stack_.push_back(std::makepair(x, y));
-    // decide();
-
-    decide(p);
-}
-
-void FollowmeCtrl::decide(const frmsg::people::ConstPtr &p)
-{
-    paintPeople(p);
-    if (p->id < 0) {
-        printf("Alas? Where is the people\n");
-        return; // do nothing
+    if (p->data == 1) {
+        open_count += 1;
+        printf("open\n");
+        if (open_count < OPEN_THRES)
+            return;
+        printf("move move!\n");
+        is_moving = 1;
+        std_msgs::Int32 stop_msg;
+        stop_msg.data = 2;
+        for (int i = 0; i < 5; i++)
+            door_signal_publisher_.publish(stop_msg);
+        walk();
     } else {
-        double people_x = p->depth[p->id];
-        double people_y = -p->x[p->id];
-        double people_z = -p->y[p->id];
-        double ow = 1;
-        double oz = 0;
-
-        people_x *= 0.5;
-        people_y *= 0.5;
-
-        double theta = atan2(people_y, people_x);
-        oz = sin(theta * 0.5);
-        ow = cos(theta * 0.5);
-
-        sendTarget(people_x, people_y, people_z, oz, ow);
-        printf("Yeah I see you\n");
+        open_count = 0;
     }
 }
 
-void FollowmeCtrl::paintPeople(const frmsg::people::ConstPtr &p)
+void WdysCtrl::speak(char *s)
 {
-    geometry_msgs::PoseArray::Ptr pose_array_msg;
-    pose_array_msg = boost::make_shared<geometry_msgs::PoseArray>();
-    for (int i = 0; i < p->x.size(); i++) {
-        geometry_msgs::Pose pose_msg;
-        pose_msg.position.x = p->depth[i];
-        pose_msg.position.y = -p->x[i];
-        pose_msg.position.z = -p->y[i];
-        pose_msg.orientation.x = 0;
-        pose_msg.orientation.y = 0;
-        pose_msg.orientation.z = 0;
-        pose_msg.orientation.w = 1;
-        pose_array_msg->poses.push_back(pose_msg);
-    }
-    pose_array_msg->header.frame_id = "base_link";
-    pose_array_msg->header.stamp = ros::Time::now();
-    people_pos_publisher_.publish(*pose_array_msg);
+    std_msgs::String msg;
+    msg.data = std::string(s);
+    say_publisher_.publish(msg);
 }
 
-void FollowmeCtrl::sendTarget(double x, double y, double z, double oz, double ow)
+void WdysCtrl::walk()
 {
-    printf("target ---- x %lf y %lf z %lf oz %lf ow %lf\n", x, y, z, oz, ow);
-    move_base_msgs::MoveBaseGoal goal;
+    ros::Duration start_space(4.0);
+    start_space.sleep();
 
-    //we'll send a goal to the robot to move 1 meter forward
-    goal.target_pose.header.frame_id = "base_link";
-    goal.target_pose.header.stamp = ros::Time::now();
+    geometry_msgs::Twist msg;
+    msg.linear.x = 0.5;
+    cmd_vel_publisher_.publish(msg);
+    ros::Duration moving(3.0);
+    moving.sleep();
+    msg.linear.x = 0;
+    cmd_vel_publisher_.publish(msg);
 
-    goal.target_pose.pose.position.x = x;
-    goal.target_pose.pose.position.y = y;
-    goal.target_pose.pose.position.z = z;
+    ros::Duration waitit(2.0);
+    waitit.sleep();
 
-    goal.target_pose.pose.orientation.x = 0;
-    goal.target_pose.pose.orientation.y = 0;
-    goal.target_pose.pose.orientation.z = oz;
-    goal.target_pose.pose.orientation.w = ow;
-
-    ROS_INFO("Sending goal");
-    // goal_publisher_.publish(goal);
-    ac_.sendGoal(goal);
-
-    // not scientific: target should be refreshed continuously
-    // to be changed!
-
-    // ac_.waitForResult();
-
-    // if(ac_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    //     ROS_INFO("Hooray, the base moved 1 meter forward");
-    // else
-    //     ROS_INFO("The base failed to move forward 1 meter for some reason");
-    return;
+    std_msgs::Int32 ok;
+    ok.data = 1;
+    answer_init_publisher_.publish(ok);
 }

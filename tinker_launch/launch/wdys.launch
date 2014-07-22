@@ -1,0 +1,18 @@
+<launch>
+    <param name="/use_sim_time" value="false" />
+
+    <node pkg="say" type="say.py" name="say">
+    </node>
+    <node pkg="openni2_camera" type="openni2_camera_node" name="openni2_camera_node" output="screen" />
+
+    <include file="$(find openni_pcl_grabber)/convert_img_to_cloud.launch" />
+    <include file="$(find tinker_launch)/launch/whatdidyousay.launch" />
+
+    <node pkg="detecting_door" type="detecting_door" name="detecting_door" output="screen">
+    </node>
+
+    <node pkg="wdys_ctrl" type="wdys_ctrl_node" name="wdys_ctrl_node" output="screen">
+    </node>
+
+
+</launch>

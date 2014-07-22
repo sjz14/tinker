@@ -1,10 +1,10 @@
-#include <followme_ctrl/followme_ctrl.h>
+#include <wdys_ctrl/wdys_ctrl.h>
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "followme_ctrl");
+    ros::init(argc, argv, "wdys_ctrl");
     ros::NodeHandle nh;
-    FollowmeCtrl ctrl(nh);
+    WdysCtrl ctrl(nh);
     ros::spin();
     return 0;
 }
