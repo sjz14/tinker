@@ -3,7 +3,7 @@
 # File          : answer_node.py
 # Author        : bss
 # Creation date : 2014-05-09
-#  Last modified: 2014-07-20, 20:41:47
+#  Last modified: 2014-07-22, 06:44:24
 # Description   : Answer question listed in resource/
 #
 
@@ -17,6 +17,7 @@ from std_msgs.msg import String
 from std_srvs.srv import *
 
 ANS = {}
+say_pub = rospy.Publisher('/say', String)
 
 class answer_handler:
     def __init__(self):
@@ -38,9 +39,10 @@ class answer_handler:
         return EmptyResponse()
 
     def getQuestionCallback(self, data):
-        if not self.allow:
-            print('job stopped.')
-            return
+        if not self.force_allow:
+            if not self.allow:
+                print('job stopped.')
+                return
 
         ques = str(data.data).strip()
 
@@ -64,9 +66,15 @@ class answer_handler:
         except rospy.ServiceException, e:
             print("Service call failed: %s"%e)
 
+        #stop recognizer
+        try:
+            stop_pock = rospy.ServiceProxy('/recognizer/stop', Empty)
+            stop_pock()
+        except rospy.ServiceException, e:
+            print("Service call failed: %s"%e)
+
         playSound('Your question is:')
         playSound(ques)
-        time.sleep(0.5)
         playSound('My answer is:')
         playSound(ans)
         
@@ -77,7 +85,14 @@ class answer_handler:
             playSound('Please continue.')
         else:
             playSound('Thank you for your questions. Goodbye.')
-        time.sleep(0.5)
+
+        #start recognizer
+        try:
+            start_pock = rospy.ServiceProxy('/recognizer/start', Empty)
+            start_pock()
+        except rospy.ServiceException, e:
+            print("Service call failed: %s"%e)
+
 
 def Usage():
     print('answer_node.py usage:')
@@ -86,12 +101,7 @@ def Usage():
     print('-i: no num limit.')
 
 def playSound(answer):
-    mp3dir = rospkg.RosPack().get_path('answer_questions') + '/resource/sounds/'
-    if os.path.exists(mp3dir + answer + '.mp3'):
-        os.system('mplayer "' + mp3dir + answer + '.mp3"')
-    else:
-        ans_speak = answer.replace("'", '')
-        os.system("espeak -s 130 --stdout '" + ans_speak + "' | aplay")
+    say_pub.publish(answer)
 
 def main(argv):
     try:

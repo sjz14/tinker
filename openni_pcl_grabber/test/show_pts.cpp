@@ -2,7 +2,7 @@
 // File         : show_pts.cpp
 // Author       : bss
 // Creation Date: 2014-07-09
-// Last modified: 2014-07-11, 00:57:27
+// Last modified: 2014-07-22, 00:41:40
 // Description  : 显示 openni 中提取的 pcl
 // 
 
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 
     cloud_mutex.unlock();
 
-    ros::Rate loop_rate(4);
+    ros::Rate loop_rate(40);
     while (nh.ok())
     {
         ros::Time scan_time = ros::Time::now();
